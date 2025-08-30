@@ -2,8 +2,9 @@ use std::{path::Path, sync::Mutex};
 
 use tauri::{Builder, Manager, State};
 
-use crate::responses::ApiResponse;
+use crate::{process::process, responses::ApiResponse};
 
+mod process;
 mod responses;
 
 #[derive(Default)]
@@ -17,7 +18,7 @@ fn caterease_input(file_path: String, state: State<'_, Mutex<AppState>>) -> ApiR
     let path = Path::new(file_path.as_str());
 
     if !path.exists() {
-        return ApiResponse::error("FILE_NOT_FOUND", "File doesn't exist");
+        return ApiResponse::error("FILE_NOT_FOUND", "File doesn't exist".into());
     }
 
     let mut state = state.lock().unwrap();
@@ -32,7 +33,7 @@ fn intuit_input(file_path: String, state: State<'_, Mutex<AppState>>) -> ApiResp
     let path = Path::new(file_path.as_str());
 
     if !path.exists() {
-        return ApiResponse::error("FILE_NOT_FOUND", "File doesn't exist");
+        return ApiResponse::error("FILE_NOT_FOUND", "File doesn't exist".into());
     }
 
     let mut state = state.lock().unwrap();
@@ -47,10 +48,16 @@ fn submit(state: State<'_, Mutex<AppState>>) -> ApiResponse<String> {
     let state = state.lock().unwrap();
 
     if state.caterease.is_empty() || state.intuit.is_empty() {
-        return ApiResponse::error("REQUIRED_FIELD_MISSING", "Both documents must be linked");
+        return ApiResponse::error(
+            "REQUIRED_FIELD_MISSING",
+            "Both documents must be linked".into(),
+        );
     }
 
-    ApiResponse::success("Uploaded".to_string())
+    match process(&state.caterease, &state.intuit) {
+        Err(error) => ApiResponse::error("INTERNAL_ERROR", error.to_string()),
+        Ok(rows) => ApiResponse::success(format!("Wrote {} rows", rows)),
+    }
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]

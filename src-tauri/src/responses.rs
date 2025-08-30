@@ -22,13 +22,13 @@ impl<T> ApiResponse<T> {
         }
     }
 
-    pub fn error(code: &str, message: &str) -> Self {
+    pub fn error(code: &str, message: String) -> Self {
         Self {
             success: false,
             data: None,
             error: Some(ApiError {
                 code: code.to_string(),
-                message: message.to_string(),
+                message,
             }),
         }
     }
