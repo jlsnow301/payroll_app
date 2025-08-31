@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -6,16 +7,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { CircleAlert, CircleCheck } from "lucide-react";
+import { useState } from "react";
 import {
   useCatereaseMutation,
   useIntuitMutation,
   useSubmitMutation,
 } from "./api";
-import { FileDropButton } from "./file-drop-button";
-import { Button } from "@/components/ui/button";
-import { CircleAlert, CircleCheck } from "lucide-react";
-import { useState } from "react";
 import { green500, red500 } from "./constants";
+import { FileDropButton } from "./file-drop-button";
 
 export function FileDropPage() {
   const submitMut = useSubmitMutation();
@@ -50,11 +50,13 @@ export function FileDropPage() {
             <FileDropButton
               mutation={useCatereaseMutation}
               title="Caterease"
+              state={hasCaterease}
               setter={setHasCaterease}
             />
             <FileDropButton
               mutation={useIntuitMutation}
               title="Intuit"
+              state={hasIntuit}
               setter={setHasIntuit}
             />
           </div>
@@ -71,7 +73,7 @@ export function FileDropPage() {
           {submitMut.isSuccess && (
             <CircleCheck
               color={green500}
-              className="fade-in"
+              className="animate-vanishing"
             />
           )}
           {submitMut.isError && (

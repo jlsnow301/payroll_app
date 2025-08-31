@@ -1,18 +1,19 @@
-import { UseMutationResult } from "@tanstack/react-query";
-import { useDropZone } from "./dropzone.ts";
 import { Button } from "@/components/ui/button.tsx";
+import { UseMutationResult } from "@tanstack/react-query";
 import { FileCheck, Loader, TriangleAlert, Upload } from "lucide-react";
 import { Dispatch, SetStateAction, useEffect } from "react";
 import { green500 } from "./constants.ts";
+import { useDropZone } from "./dropzone.ts";
 
 type FileDropProps = {
   mutation: () => UseMutationResult<unknown, Error, string, unknown>;
   setter: Dispatch<SetStateAction<boolean>>;
+  state: boolean;
   title: string;
 };
 
 export function FileDropButton(props: FileDropProps) {
-  const { mutation: useOurMutation, setter, title } = props;
+  const { mutation: useOurMutation, setter, state: isUploaded, title } = props;
 
   const { ref } = useDropZone({ onDrop: handleDrop });
 
@@ -30,7 +31,7 @@ export function FileDropButton(props: FileDropProps) {
     icon = <TriangleAlert />;
   } else if (ourMut.isPending) {
     icon = <Loader className="animate-spin" />;
-  } else if (ourMut.isSuccess) {
+  } else if (isUploaded) {
     icon = <FileCheck color={green500} />;
   }
 

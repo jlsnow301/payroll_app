@@ -1,7 +1,7 @@
 use crate::process::deserialize::Order;
 use anyhow::{anyhow, Result};
 
-pub fn test_order_input(orders: &[Order]) -> Result<()> {
+pub fn validate_order_input(orders: &[Order]) -> Result<()> {
     // No orders
     if orders.is_empty() {
         return Err(anyhow!("No orders found in Excel file"));

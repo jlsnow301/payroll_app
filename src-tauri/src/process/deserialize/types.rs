@@ -18,7 +18,7 @@ pub struct Order {
     pub expanded: bool,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct TimeActivity {
     pub first_name: String,
     pub full_name: String,

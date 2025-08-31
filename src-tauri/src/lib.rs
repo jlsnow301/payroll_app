@@ -2,15 +2,22 @@ use std::{path::Path, sync::Mutex};
 
 use tauri::{Builder, Manager, State};
 
-use crate::{process::process, responses::ApiResponse};
+use crate::{
+    process::{
+        deserialize::{deserialize_caterease_excel, deserialize_intuit_excel, Order, TimeActivity},
+        process,
+        validate::validate_order_input,
+    },
+    responses::ApiResponse,
+};
 
 mod process;
 mod responses;
 
 #[derive(Default)]
 struct AppState {
-    caterease: String,
-    intuit: String,
+    caterease: Vec<Order>,
+    intuit: Vec<TimeActivity>,
 }
 
 #[tauri::command]
@@ -21,9 +28,18 @@ fn caterease_input(file_path: String, state: State<'_, Mutex<AppState>>) -> ApiR
         return ApiResponse::error("FILE_NOT_FOUND", "File doesn't exist".into());
     }
 
+    let orders: Vec<Order> = match deserialize_caterease_excel(&file_path) {
+        Ok(res) => res,
+        Err(e) => return ApiResponse::error("INVALID_FORMAT", e.to_string()),
+    };
+
+    if let Err(e) = validate_order_input(&orders) {
+        return ApiResponse::error("VALIDATION_ERROR", e.to_string());
+    }
+
     let mut state = state.lock().unwrap();
 
-    state.caterease = file_path;
+    state.caterease = orders;
 
     ApiResponse::success("Success".to_string())
 }
@@ -36,9 +52,14 @@ fn intuit_input(file_path: String, state: State<'_, Mutex<AppState>>) -> ApiResp
         return ApiResponse::error("FILE_NOT_FOUND", "File doesn't exist".into());
     }
 
+    let timesheets: Vec<TimeActivity> = match deserialize_intuit_excel(&file_path) {
+        Ok(res) => res,
+        Err(e) => return ApiResponse::error("INVALID_FORMAT", e.to_string()),
+    };
+
     let mut state = state.lock().unwrap();
 
-    state.intuit = file_path;
+    state.intuit = timesheets;
 
     ApiResponse::success("Success".to_string())
 }
@@ -54,7 +75,9 @@ fn submit(state: State<'_, Mutex<AppState>>) -> ApiResponse<String> {
         );
     }
 
-    match process(&state.caterease, &state.intuit) {
+    let mut cloned_timesheet = state.intuit.clone();
+
+    match process(&state.caterease, &mut cloned_timesheet) {
         Err(error) => ApiResponse::error("INTERNAL_ERROR", error.to_string()),
         Ok(rows) => ApiResponse::success(format!("Wrote {} rows", rows)),
     }
