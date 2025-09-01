@@ -1,4 +1,4 @@
-use crate::process::deserialize::Order;
+use crate::process::deserialize::{Order, TimeActivity};
 use anyhow::{anyhow, Result};
 
 pub fn validate_order_input(orders: &[Order]) -> Result<()> {
@@ -26,6 +26,22 @@ pub fn validate_order_input(orders: &[Order]) -> Result<()> {
     }
     if days_total == 0 {
         return Err(anyhow!("No valid dates found"));
+    }
+
+    Ok(())
+}
+
+pub fn validate_time_input(timesheets: &[TimeActivity]) -> Result<()> {
+    // No time activities
+    if timesheets.is_empty() {
+        return Err(anyhow!("No entries found in time sheet"));
+    }
+
+    // Can't reference
+    for entry in timesheets.iter() {
+        if entry.first_name.is_empty() {
+            return Err(anyhow!("Unknown entry in timesheet"));
+        }
     }
 
     Ok(())

@@ -6,7 +6,7 @@ use crate::{
     process::{
         deserialize::{deserialize_caterease_excel, deserialize_intuit_excel, Order, TimeActivity},
         process,
-        validate::validate_order_input,
+        validate::{validate_order_input, validate_time_input},
     },
     responses::ApiResponse,
 };
@@ -56,6 +56,10 @@ fn intuit_input(file_path: String, state: State<'_, Mutex<AppState>>) -> ApiResp
         Ok(res) => res,
         Err(e) => return ApiResponse::error("INVALID_FORMAT", e.to_string()),
     };
+
+    if let Err(e) = validate_time_input(&timesheets) {
+        return ApiResponse::error("VALIDATION_ERROR", e.to_string());
+    }
 
     let mut state = state.lock().unwrap();
 
