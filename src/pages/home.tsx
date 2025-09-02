@@ -1,5 +1,5 @@
-import { StarBg } from "./animated-bg";
-import { FileDropCard } from "./card";
+import { StarBg } from "../features/animated-bg/stars";
+import { FileDropCard } from "../features/file-drop/card";
 
 export function FileDropPage() {
   return (

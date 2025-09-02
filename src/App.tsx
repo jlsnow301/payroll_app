@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "./components/theme-provider";
-import { FileDropPage } from "./features/file-drop";
+import { HomePage } from "./pages/home";
 
 const queryClient = new QueryClient();
 
@@ -9,7 +9,7 @@ export function App() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <main className="h-screen w-screen text-foreground flex">
-          <FileDropPage />
+          <HomePage />
         </main>
       </ThemeProvider>
     </QueryClientProvider>
