@@ -8,7 +8,7 @@ export function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-        <main className="h-screen w-screen p-2 bg-background text-foreground flex">
+        <main className="h-screen w-screen text-foreground flex">
           <FileDropPage />
         </main>
       </ThemeProvider>

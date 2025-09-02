@@ -6,6 +6,7 @@ use anyhow::Result;
 use rust_xlsxwriter::{workbook::Workbook, Color, Format, FormatAlign, FormatBorder};
 
 const LT_GRAY: u32 = 0xE5E7EB;
+const PASTEL_YELLOW: u32 = 0xFFFFBA;
 
 pub fn write_new_xlsx(rows: Vec<PreparedRow>) -> Result<()> {
     let mut workbook = Workbook::new();
@@ -29,6 +30,9 @@ pub fn write_new_xlsx(rows: Vec<PreparedRow>) -> Result<()> {
     let standard = Format::new()
         .set_border(FormatBorder::Thin)
         .set_border_color(Color::Gray);
+    let expanded = standard
+        .clone()
+        .set_background_color(Color::RGB(PASTEL_YELLOW));
     let header = standard.clone().set_background_color(Color::RGB(LT_GRAY));
     let money = standard
         .clone()
@@ -42,10 +46,15 @@ pub fn write_new_xlsx(rows: Vec<PreparedRow>) -> Result<()> {
     row += 1;
 
     for entry in rows.iter() {
+        let to_use = match entry.order.expanded {
+            true => &expanded,
+            false => &standard,
+        };
+
         worksheet.set_row_format(row, &standard)?;
         write_order_date(worksheet, row, 0, entry.order.date, &date)?;
-        worksheet.write_string(row, 1, entry.order.employee.to_string())?;
-        worksheet.write_string(row, 2, entry.order.client.to_string())?;
+        worksheet.write_string_with_format(row, 1, entry.order.employee.to_string(), to_use)?;
+        worksheet.write_string_with_format(row, 2, entry.order.client.to_string(), to_use)?;
         worksheet.write_string(row, 3, entry.order.description.to_string())?;
         worksheet.write_number_with_format(row, 4, entry.order.count as f64, &right_align)?;
         worksheet.write_number_with_format(row, 5, entry.hours, &right_align)?;

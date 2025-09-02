@@ -47,7 +47,7 @@ export function FileDropButton(props: FileDropProps) {
         ref={ref}
         variant="outline"
         size="lg"
-        className="w-36"
+        className="h-36 w-36 text-lg flex-col select-none border-4 border-dotted hover:dark:border-yellow-400"
       >
         {icon} {title}
       </Button>
