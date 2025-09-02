@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -7,26 +6,33 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { AlertCircleIcon, CircleAlert, CircleCheck } from "lucide-react";
 import {
   useCatereaseMutation,
   useIntuitMutation,
   useSubmitMutation,
 } from "./api";
-import { green500, red500 } from "./constants";
 import { FileDropButton } from "./file-drop-button";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { ResultSection } from "./result-section";
+import { ErrorAlert } from "./error-alert";
+import { useState } from "react";
+import { Slider } from "@/components/ui/slider";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export function FileDropCard() {
+  const [precision, setPrecision] = useState(1);
+
   const catereaseMut = useCatereaseMutation();
   const intuitMut = useIntuitMutation();
-
   const submitMut = useSubmitMutation();
 
   const ready = catereaseMut.isSuccess && intuitMut.isSuccess;
 
   function handleSubmit(): void {
-    submitMut.mutate();
+    submitMut.mutate(precision);
 
     catereaseMut.reset();
     intuitMut.reset();
@@ -57,80 +63,60 @@ export function FileDropCard() {
           squares to begin.
         </CardDescription>
       </CardHeader>
-      <CardContent className="h-full">
-        <div className="flex flex-1 flex-col gap-4 justify-around items-center">
-          <div className="flex gap-8 justify-around items-center">
-            <FileDropButton
-              mutation={catereaseMut}
-              title="Caterease"
-            />
-            <FileDropButton
-              mutation={intuitMut}
-              title="Intuit"
+      <CardContent className="flex-1 flex flex-col gap-4 justify-center items-center">
+        <div className="flex w-full gap-8 justify-around">
+          <FileDropButton
+            mutation={catereaseMut}
+            title="Caterease"
+            tooltipContent="Requires an export from caterease- all orders in a given pay period"
+          />
+          <FileDropButton
+            mutation={intuitMut}
+            title="Intuit"
+            tooltipContent="Requires an export from Intuit. Sidebar -> Reports -> Timesheets"
+          />
+          <div className="flex flex-col gap-2 items-center justify-center">
+            <Tooltip>
+              <TooltipTrigger>
+                <span>
+                  Precision: {precision} hour{precision > 1 && "s"}
+                </span>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>
+                  Adjusts the leniency while matching order ready times with
+                  clock in times.<br />More leniency may provide more matches,
+                  but at the cost of accuracy.<br />Piggy back orders will
+                  almost certainly be affected.
+                </p>
+              </TooltipContent>
+            </Tooltip>
+            <Slider
+              className="w-36"
+              value={[precision]}
+              max={5}
+              step={1}
+              min={1}
+              onValueChange={(val) => setPrecision(val[0])}
             />
           </div>
-          <div className="flex-1 w-3/4">
-            {errors.length > 0 && (
-              <ErrorAlert
-                errors={errors}
-                reset={resetError}
-              />
-            )}
-          </div>
+        </div>
+        <div className="flex-1 w-3/4">
+          {errors.length > 0 && (
+            <ErrorAlert
+              errors={errors}
+              reset={resetError}
+            />
+          )}
         </div>
       </CardContent>
-      <CardFooter className="flex-row-reverse gap-2">
-        <Button
-          disabled={!ready}
-          onClick={handleSubmit}
-          className="w-36"
-          size="lg"
-        >
-          {submitMut.isSuccess ? "Done" : ready ? "Submit" : "Waiting"}
-        </Button>
-        {submitMut.isSuccess && (
-          <CircleCheck
-            color={green500}
-            className="animate-vanishing"
-          />
-        )}
-        {submitMut.isError && (
-          <CircleAlert
-            color={red500}
-            className="fade-in"
-          />
-        )}
-        {submitMut.isError && <CircleAlert color={red500} />}
+      <CardFooter>
+        <ResultSection
+          mutation={submitMut}
+          onSubmit={handleSubmit}
+          ready={ready}
+        />
       </CardFooter>
     </Card>
-  );
-}
-
-type ErrorAlertProps = {
-  errors: string[];
-  reset: () => void;
-};
-
-function ErrorAlert(props: ErrorAlertProps) {
-  const { errors, reset } = props;
-
-  return (
-    <Alert
-      variant="destructive"
-      className="text-lg"
-    >
-      <AlertCircleIcon />
-      <AlertTitle>Error detected</AlertTitle>
-      <AlertDescription className="flex">
-        <div className="flex flex-1 justify-between">
-          <ul className="list-disc">
-            {errors.map((msg) => <li>{msg}</li>)}
-          </ul>
-          <Button onClick={reset} size="sm" variant="outline">
-            Reset
-          </Button>
-        </div>
-      </AlertDescription>
-    </Alert>
   );
 }

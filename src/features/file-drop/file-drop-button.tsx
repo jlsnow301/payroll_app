@@ -2,14 +2,20 @@ import { UseMutationResult } from "@tanstack/react-query";
 import { FileCheck, Loader, TriangleAlert, Upload } from "lucide-react";
 import { green500 } from "./constants.ts";
 import { useDropZone } from "./dropzone.ts";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip.tsx";
 
 type FileDropProps = {
   mutation: UseMutationResult<unknown, Error, string, unknown>;
   title: string;
+  tooltipContent: string;
 };
 
 export function FileDropButton(props: FileDropProps) {
-  const { mutation: ourMut, title } = props;
+  const { mutation: ourMut, title, tooltipContent } = props;
 
   const { ref } = useDropZone({ onDrop: handleDrop });
 
@@ -30,17 +36,24 @@ export function FileDropButton(props: FileDropProps) {
   }
 
   return (
-    <div
-      ref={ref}
-      className="
+    <Tooltip>
+      <TooltipTrigger>
+        <div
+          ref={ref}
+          className="
       h-36 w-36 select-none bg-background gap-4
       flex flex-col justify-center items-center
       text-foreground text-lg
       transition-all
       border-4 border-dotted hover:border-yellow-400 rounded-lg      
       "
-    >
-      {icon} {title}
-    </div>
+        >
+          {icon} {title}
+        </div>
+      </TooltipTrigger>
+      <TooltipContent>
+        <p>{tooltipContent}</p>
+      </TooltipContent>
+    </Tooltip>
   );
 }

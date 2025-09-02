@@ -18,7 +18,7 @@ pub fn deserialize_caterease_excel(file_path: &str) -> Result<Vec<Order>> {
 
     let worksheet = workbook
         .worksheet_range_at(0)
-        .context("Cannot find worksheet at index 0")?
+        .context("Couldn't find first worksheet")?
         .context("Error reading worksheet data")?;
 
     validate_headers(
@@ -78,7 +78,7 @@ pub fn deserialize_intuit_excel(file_path: &str) -> Result<Vec<TimeActivity>> {
 
     let worksheet = workbook
         .worksheet_range("Timesheets")
-        .context("Cannot find timesheets page")?;
+        .context("Cannot find sheet named 'Timesheets'")?;
 
     validate_headers(
         &worksheet,

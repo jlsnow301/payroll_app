@@ -1,4 +1,4 @@
-use anyhow::Result;
+use serde_json::{json, Value};
 use std::{path::Path, sync::Mutex};
 use tauri::{Builder, Manager, State};
 
@@ -65,7 +65,7 @@ fn intuit_input(file_path: String, state: State<'_, Mutex<AppState>>) -> Result<
 }
 
 #[tauri::command]
-fn submit(state: State<'_, Mutex<AppState>>) -> Result<String, String> {
+fn submit(precision: usize, state: State<'_, Mutex<AppState>>) -> Result<Value, String> {
     let state = state.lock().unwrap();
 
     if state.caterease.is_empty() || state.intuit.is_empty() {
@@ -74,10 +74,12 @@ fn submit(state: State<'_, Mutex<AppState>>) -> Result<String, String> {
 
     let mut cloned_timesheet = state.intuit.clone();
 
-    match process(&state.caterease, &mut cloned_timesheet) {
-        Err(e) => Err(e.to_string()),
-        Ok(rows) => Ok(format!("Wrote {} rows", rows)),
-    }
+    let process_result = match process(&state.caterease, &mut cloned_timesheet, precision as i64) {
+        Err(e) => return Err(e.to_string()),
+        Ok(result) => result,
+    };
+
+    Ok(json!(process_result))
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]

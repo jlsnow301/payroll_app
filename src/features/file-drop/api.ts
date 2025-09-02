@@ -13,8 +13,16 @@ export function useIntuitMutation() {
   });
 }
 
+export type ProcessResult = {
+  expanded: number;
+  matched: number;
+  missing: number;
+  total: number;
+};
+
 export function useSubmitMutation() {
   return useMutation({
-    mutationFn: () => invoke("submit"),
+    mutationFn: (precision: number) =>
+      invoke("submit", { precision }).then((res) => res as ProcessResult),
   });
 }

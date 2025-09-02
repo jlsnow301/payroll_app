@@ -6,3 +6,9 @@ pub struct PreparedRow {
     pub hours: f64,
     pub miles: f64,
 }
+
+#[derive(Debug)]
+pub struct ReferenceResult {
+    pub rows: Vec<PreparedRow>,
+    pub matched: u32,
+}

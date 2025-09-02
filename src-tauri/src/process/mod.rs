@@ -1,10 +1,11 @@
 use crate::process::{
-    compare::{cross_reference_orders, PreparedRow},
+    compare::cross_reference_orders,
     deserialize::{Order, TimeActivity},
     expand::expand_orders,
     write::write_new_xlsx,
 };
 use anyhow::Result;
+use serde::Serialize;
 
 mod compare;
 pub mod deserialize;
@@ -12,14 +13,29 @@ mod expand;
 pub mod validate;
 mod write;
 
-pub fn process(caterease: &[Order], intuit: &mut [TimeActivity]) -> Result<usize> {
+#[derive(Serialize)]
+pub struct ProcessResult {
+    pub expanded: usize,
+    pub matched: u32,
+    pub total: usize,
+    pub missing: u32,
+}
+
+pub fn process(
+    caterease: &[Order],
+    intuit: &mut [TimeActivity],
+    precision: i64,
+) -> Result<ProcessResult> {
     let expanded = expand_orders(caterease);
 
-    let prepared_rows: Vec<PreparedRow> = cross_reference_orders(&expanded, intuit);
+    let reference_result = cross_reference_orders(&expanded, intuit, precision);
 
-    let to_write = prepared_rows.len();
+    write_new_xlsx(&reference_result.rows)?;
 
-    write_new_xlsx(prepared_rows)?;
-
-    Ok(to_write)
+    Ok(ProcessResult {
+        expanded: expanded.len() - caterease.len(),
+        matched: reference_result.matched,
+        total: expanded.len(),
+        missing: intuit.len() as u32 - reference_result.matched,
+    })
 }

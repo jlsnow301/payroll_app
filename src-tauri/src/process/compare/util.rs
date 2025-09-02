@@ -7,8 +7,8 @@ use crate::process::deserialize::{Order, TimeActivity};
 static INVALID_NAMES: LazyLock<Vec<String>> =
     LazyLock::new(|| vec!["patio party".to_string(), "pickup".to_string()]);
 
-pub fn is_within_one_hour(time_a: &DateTime<Utc>, time_b: &DateTime<Utc>) -> bool {
-    let duration_limit = Duration::hours(1);
+pub fn is_within_time(time_a: &DateTime<Utc>, time_b: &DateTime<Utc>, precision: i64) -> bool {
+    let duration_limit = Duration::hours(precision);
 
     let diff = (*time_a - *time_b).abs();
 

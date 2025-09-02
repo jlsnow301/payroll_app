@@ -1,16 +1,19 @@
-use crate::{
-    process::compare::{
+use crate::process::{
+    compare::{
         types::PreparedRow,
-        util::{is_name_match, is_valid_order, is_within_one_hour},
+        util::{is_name_match, is_valid_order, is_within_time},
+        ReferenceResult,
     },
-    process::deserialize::{Order, TimeActivity},
+    deserialize::{Order, TimeActivity},
 };
 
 pub fn cross_reference_orders(
     orders: &[Order],
     time_sheets: &mut [TimeActivity],
-) -> Vec<PreparedRow> {
+    precision: i64,
+) -> ReferenceResult {
     let mut to_write: Vec<PreparedRow> = Vec::new();
+    let mut matched = 0;
 
     for order in orders.iter() {
         let mut entry = PreparedRow {
@@ -35,10 +38,10 @@ pub fn cross_reference_orders(
                 continue;
             }
 
-            if is_within_one_hour(&order.datetime, &time_activity.in_time) {
+            if is_within_time(&order.datetime, &time_activity.in_time, precision) {
                 entry.hours = time_activity.hours;
                 entry.miles = time_activity.miles;
-
+                matched += 1;
                 break;
             }
         }
@@ -46,5 +49,8 @@ pub fn cross_reference_orders(
         to_write.push(entry)
     }
 
-    to_write
+    ReferenceResult {
+        rows: to_write,
+        matched,
+    }
 }

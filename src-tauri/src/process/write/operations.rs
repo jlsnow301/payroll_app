@@ -8,7 +8,7 @@ use rust_xlsxwriter::{workbook::Workbook, Color, Format, FormatAlign, FormatBord
 const LT_GRAY: u32 = 0xE5E7EB;
 const PASTEL_YELLOW: u32 = 0xFFFFBA;
 
-pub fn write_new_xlsx(rows: Vec<PreparedRow>) -> Result<()> {
+pub fn write_new_xlsx(rows: &[PreparedRow]) -> Result<()> {
     let mut workbook = Workbook::new();
     let worksheet = workbook.add_worksheet();
 
