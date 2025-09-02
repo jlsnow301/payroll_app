@@ -1,7 +1,7 @@
 import { StarBg } from "../features/animated-bg/stars";
 import { FileDropCard } from "../features/file-drop/card";
 
-export function FileDropPage() {
+export function HomePage() {
   return (
     <div className="
       flex flex-1 justify-center items-center

@@ -1,5 +1,22 @@
 use crate::process::deserialize::{Order, TimeActivity};
-use anyhow::{anyhow, Result};
+use anyhow::{anyhow, Context, Result};
+use calamine::{Data, DataType, Range};
+
+pub fn validate_headers(worksheet: &Range<Data>, expected_headers: &[&str]) -> Result<()> {
+    for (col, header) in expected_headers.iter().enumerate() {
+        let value = worksheet
+            .get((0, col))
+            .context(format!("Couldn't read header column {}", col))?
+            .get_string()
+            .context("Couldn't read header")?;
+
+        if *header != value {
+            return Err(anyhow!("Improper header in file: {}", value));
+        }
+    }
+
+    Ok(())
+}
 
 pub fn validate_order_input(orders: &[Order]) -> Result<()> {
     // No orders

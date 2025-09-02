@@ -17,16 +17,20 @@ type Props = {
 
 export function useDropZone(props: Props) {
   const { onDrop } = props;
-  const ref = useRef<HTMLButtonElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const unlisten = listen<TauriDragDropEvent>(
       "tauri://drag-drop",
       (evt) => {
         const { x, y } = evt.payload.position;
-        if (document.elementFromPoint(x, y) == ref.current) {
-          onDrop(evt.payload.paths);
-        }
+        const elementAtPoint = document.elementFromPoint(x, y);
+
+        if (
+          ref.current &&
+          (elementAtPoint === ref.current ||
+            ref.current.contains(elementAtPoint))
+        ) onDrop(evt.payload.paths);
       },
     );
     return () => {

@@ -1,12 +1,15 @@
 use anyhow::{Context, Result};
 use calamine::{open_workbook, Reader, Xlsx};
 
-use crate::process::deserialize::{
-    types::{Order, TimeActivity},
-    util::{
-        deserialize_date_cell, deserialize_float_cell, deserialize_int_cell,
-        deserialize_string_cell, deserialize_string_date, join_date_and_time,
+use crate::process::{
+    deserialize::{
+        types::{Order, TimeActivity},
+        util::{
+            deserialize_date_cell, deserialize_float_cell, deserialize_int_cell,
+            deserialize_string_cell, deserialize_string_date, join_date_and_time,
+        },
     },
+    validate::validate_headers,
 };
 
 pub fn deserialize_caterease_excel(file_path: &str) -> Result<Vec<Order>> {
@@ -17,6 +20,22 @@ pub fn deserialize_caterease_excel(file_path: &str) -> Result<Vec<Order>> {
         .worksheet_range_at(0)
         .context("Cannot find worksheet at index 0")?
         .context("Error reading worksheet data")?;
+
+    validate_headers(
+        &worksheet,
+        &[
+            "Date",
+            "Delivery Person",
+            "Client/Organization",
+            "Description",
+            "Actual",
+            "Grat",
+            "Delivery Category",
+            "Sub-Event #",
+            "Ready",
+            "Subtotal",
+        ],
+    )?;
 
     let mut orders = Vec::new();
 
@@ -60,6 +79,20 @@ pub fn deserialize_intuit_excel(file_path: &str) -> Result<Vec<TimeActivity>> {
     let worksheet = workbook
         .worksheet_range("Timesheets")
         .context("Cannot find timesheets page")?;
+
+    validate_headers(
+        &worksheet,
+        &[
+            "First name",
+            "Last name",
+            "Username",
+            "Start time",
+            "End time",
+            "Customer",
+            "Hours",
+            "Miles",
+        ],
+    )?;
 
     let mut time_sheets: Vec<TimeActivity> = Vec::new();
 
