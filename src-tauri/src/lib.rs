@@ -1,6 +1,7 @@
 use serde_json::{json, Value};
 use std::{path::Path, sync::Mutex};
 use tauri::{Builder, Manager, State};
+use tauri_plugin_opener::reveal_item_in_dir;
 
 use crate::process::{
     deserialize::{deserialize_caterease_excel, deserialize_intuit_excel, Order, TimeActivity},
@@ -15,6 +16,8 @@ struct AppState {
     caterease: Vec<Order>,
     intuit: Vec<TimeActivity>,
 }
+
+pub const OUTPUT_PATH: &str = "./formatted_payroll.xlsx";
 
 #[tauri::command]
 fn caterease_input(file_path: String, state: State<'_, Mutex<AppState>>) -> Result<String, String> {
@@ -37,7 +40,9 @@ fn caterease_input(file_path: String, state: State<'_, Mutex<AppState>>) -> Resu
 
     state.caterease = orders;
 
-    Ok("Success".into())
+    let filename = file_path.split("/").last().unwrap().replace(".xlsx", "");
+
+    Ok(filename)
 }
 
 #[tauri::command]
@@ -61,7 +66,9 @@ fn intuit_input(file_path: String, state: State<'_, Mutex<AppState>>) -> Result<
 
     state.intuit = timesheets;
 
-    Ok("Success".to_string())
+    let filename = file_path.split("/").last().unwrap().replace(".xlsx", "");
+
+    Ok(filename)
 }
 
 #[tauri::command]
@@ -79,6 +86,8 @@ fn submit(precision: usize, state: State<'_, Mutex<AppState>>) -> Result<Value, 
         Ok(result) => result,
     };
 
+    reveal_item_in_dir(OUTPUT_PATH).unwrap();
+
     Ok(json!(process_result))
 }
 
@@ -90,6 +99,7 @@ pub fn run() {
             Ok(())
         })
         .plugin(tauri_plugin_opener::init())
+        .plugin(tauri_plugin_dialog::init())
         .invoke_handler(tauri::generate_handler![
             caterease_input,
             intuit_input,

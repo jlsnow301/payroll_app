@@ -6,21 +6,23 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  useCatereaseMutation,
-  useIntuitMutation,
-  useSubmitMutation,
-} from "./api";
-import { FileDropButton } from "./file-drop-button";
-import { ResultSection } from "./result-section";
-import { ErrorAlert } from "./error-alert";
-import { useState } from "react";
 import { Slider } from "@/components/ui/slider";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useState } from "react";
+import {
+  useCatereaseMutation,
+  useIntuitMutation,
+  useSubmitMutation,
+} from "./api";
+import { ErrorAlert } from "./error-alert";
+import { FileDropButton } from "./file-drop-button";
+import { ResultSection } from "./result-section";
+import { Button } from "@/components/ui/button";
+import { RefreshCcw } from "lucide-react";
 
 export function FileDropCard() {
   const [precision, setPrecision] = useState(1);
@@ -29,54 +31,60 @@ export function FileDropCard() {
   const intuitMut = useIntuitMutation();
   const submitMut = useSubmitMutation();
 
-  const ready = catereaseMut.isSuccess && intuitMut.isSuccess;
+  const ready = catereaseMut.isSuccess && intuitMut.isSuccess &&
+    submitMut.isIdle;
 
-  function handleSubmit(): void {
-    submitMut.mutate(precision);
-
-    catereaseMut.reset();
-    intuitMut.reset();
-
-    setTimeout(() => {
+  /** Resets the state of submit once a new file is input */
+  function handleFileInput(): void {
+    if (!submitMut.isIdle) {
       submitMut.reset();
-    }, 3000);
+    }
   }
 
-  function resetError(): void {
+  function reset(): void {
     catereaseMut.reset();
     intuitMut.reset();
     submitMut.reset();
   }
 
-  let errors: string[] = [];
+  const errors: string[] = [];
   if (catereaseMut.isError) errors.push(`Caterease- ${catereaseMut.error}`);
   if (intuitMut.isError) errors.push(`Intuit- ${intuitMut.error}`);
   if (submitMut.isError) errors.push(`Process- ${submitMut.error}`);
 
   return (
-    <Card className="w-7/8 h-7/8 z-10 opacity-90">
+    <Card className="w-7/8 h-7/8 z-10 opacity-90 select-none">
       <CardHeader>
-        <CardTitle className="text-xl">🗃 Payroll App</CardTitle>
+        <CardTitle className="text-xl flex justify-between h-8">
+          <span>🗃 Payroll App</span>
+          {!submitMut.isIdle && (
+            <Button onClick={reset} size="sm" variant="ghost">
+              <RefreshCcw /> Reset
+            </Button>
+          )}
+        </CardTitle>
         <CardDescription className="opacity-100 text-md font-bold">
           This application takes two input files from caterease (the orders) and
-          intuit (the employee hours). Drag the files onto their respective
-          squares to begin.
+          intuit (the employee hours). Select or drag the files onto their
+          respective squares to begin.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex-1 flex flex-col gap-4 justify-center items-center">
         <div className="flex w-full gap-8 justify-around">
           <FileDropButton
             mutation={catereaseMut}
+            reset={handleFileInput}
             title="Caterease"
-            tooltipContent="Requires an export from caterease- all orders in a given pay period"
+            tooltipContent="Requires an export from caterease- all orders in a given pay period."
           />
           <FileDropButton
             mutation={intuitMut}
+            reset={handleFileInput}
             title="Intuit"
-            tooltipContent="Requires an export from Intuit. Sidebar -> Reports -> Timesheets"
+            tooltipContent="Requires an export from Intuit. Find this in the 'reports' section. Contains miles and a timesheet page."
           />
           <div className="flex flex-col gap-2 items-center justify-center">
-            <Tooltip>
+            <Tooltip delayDuration={500}>
               <TooltipTrigger>
                 <span>
                   Precision: {precision} hour{precision > 1 && "s"}
@@ -105,7 +113,7 @@ export function FileDropCard() {
           {errors.length > 0 && (
             <ErrorAlert
               errors={errors}
-              reset={resetError}
+              reset={reset}
             />
           )}
         </div>
@@ -113,7 +121,7 @@ export function FileDropCard() {
       <CardFooter>
         <ResultSection
           mutation={submitMut}
-          onSubmit={handleSubmit}
+          onSubmit={() => submitMut.mutate(precision)}
           ready={ready}
         />
       </CardFooter>

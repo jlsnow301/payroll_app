@@ -20,7 +20,7 @@ export function ErrorAlert(props: Props) {
       <AlertDescription className="flex">
         <div className="flex flex-1 justify-between">
           <ul className="list-disc">
-            {errors.map((msg) => <li>{msg}</li>)}
+            {errors.map((msg, index) => <li key={index}>{msg}</li>)}
           </ul>
           <Button onClick={reset} size="sm" variant="outline">
             Reset

@@ -1,6 +1,9 @@
 use crate::{
-    process::compare::PreparedRow,
-    process::write::util::{write_header_row, write_order_date},
+    process::{
+        compare::PreparedRow,
+        write::util::{write_header_row, write_order_date},
+    },
+    OUTPUT_PATH,
 };
 use anyhow::Result;
 use rust_xlsxwriter::{workbook::Workbook, Color, Format, FormatAlign, FormatBorder};
@@ -68,6 +71,6 @@ pub fn write_new_xlsx(rows: &[PreparedRow]) -> Result<()> {
         row += 1;
     }
 
-    workbook.save("../formatted_payroll.xlsx")?;
+    workbook.save(OUTPUT_PATH)?;
     Ok(())
 }

@@ -17,7 +17,7 @@ type Props = {
 
 export function useDropZone(props: Props) {
   const { onDrop } = props;
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const unlisten = listen<TauriDragDropEvent>(

@@ -26,18 +26,18 @@ export function ResultSection(props: Props) {
   const { mutation, ready, onSubmit } = props;
 
   return (
-    <div className="flex flex-1 gap-2 justify-between">
+    <div className="flex flex-1 gap-2 justify-between items-center">
       <div>
         {mutation.isSuccess && <ViewStats {...mutation.data} />}
       </div>
-      <div>
+      <div className="flex gap-2 items-center">
         {mutation.isSuccess && (
           <CircleCheck className="animate-vanishing" color={green500} />
         )}
         {mutation.isError && (
           <CircleAlert className="animate-vanishing" color={red500} />
         )}
-        <Tooltip>
+        <Tooltip delayDuration={500}>
           <TooltipTrigger>
             <Button
               disabled={!ready}
@@ -49,7 +49,9 @@ export function ResultSection(props: Props) {
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            {!ready && "Both files must be uploaded and valid"}
+            {ready
+              ? "Click to process the file"
+              : "Both files must be uploaded and valid"}
           </TooltipContent>
         </Tooltip>
       </div>
@@ -58,23 +60,23 @@ export function ResultSection(props: Props) {
 }
 
 function ViewStats(props: ProcessResult) {
-  const { matched, total, missing, expanded } = props;
+  const { matched = 0, total = 1, missing = 0, expanded = 0 } = props;
 
   const accuracy = (missing / total * 100).toFixed(2);
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">
+        <Button size="lg" variant="outline">
           View Stats
         </Button>
       </DialogTrigger>
-      <DialogHeader>
-        <DialogTitle>Processing Results</DialogTitle>
-      </DialogHeader>
       <DialogContent>
-        Overall, the process produced {total} orders with {matched}{" "}
-        timesheet matches. Given the sensitivity, it had
+        <DialogHeader>
+          <DialogTitle>Processing Results</DialogTitle>
+        </DialogHeader>
+        Overall, the application produced {total} orders with {matched}{" "}
+        timesheet matches. Given the sensitivity, it had{" "}
         {accuracy}% matching accuracy ({missing}{" "}
         missing). Orders with multiple assignees were expanded to produce{" "}
         {expanded} rows, highlighted in yellow.

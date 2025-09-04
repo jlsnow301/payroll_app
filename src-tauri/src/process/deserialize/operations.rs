@@ -32,7 +32,7 @@ pub fn deserialize_caterease_excel(file_path: &str) -> Result<Vec<Order>> {
             "Grat",
             "Delivery Category",
             "Sub-Event #",
-            "Ready",
+            "Kitchen Ready by",
             "Subtotal",
         ],
     )?;

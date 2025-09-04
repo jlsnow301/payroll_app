@@ -11,7 +11,11 @@ pub fn validate_headers(worksheet: &Range<Data>, expected_headers: &[&str]) -> R
             .context("Couldn't read header")?;
 
         if *header != value {
-            return Err(anyhow!("Improper header in file: {}", value));
+            return Err(anyhow!(
+                "Improper header in file: {} (Expected: {})",
+                value,
+                header
+            ));
         }
     }
 
