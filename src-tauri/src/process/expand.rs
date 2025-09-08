@@ -44,7 +44,7 @@ pub fn expand_orders(orders: &[Order]) -> Vec<Order> {
     for order in orders.iter() {
         let mut drivers = get_drivers(order);
 
-        let was_expanded = drivers.len() > 2;
+        let was_expanded = drivers.len() > 1;
 
         if was_expanded {
             drivers.reverse(); // Put helpers last

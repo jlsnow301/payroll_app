@@ -8,12 +8,13 @@ use crate::process::{
 };
 
 pub fn cross_reference_orders(
-    orders: &[Order],
+    orders: &mut [Order],
     time_sheets: &mut [TimeActivity],
     precision: i64,
 ) -> ReferenceResult {
     let mut to_write: Vec<PreparedRow> = Vec::new();
     let mut matched = 0;
+    let mut skipped = 0;
 
     for order in orders.iter() {
         let mut entry = PreparedRow {
@@ -23,9 +24,10 @@ pub fn cross_reference_orders(
         };
 
         let lower_emp = order.employee.to_lowercase();
-        if !is_valid_order(lower_emp) {
+        if !is_valid_order(&lower_emp) {
             // Patio party or something
             to_write.push(entry);
+            skipped += 1;
             continue;
         }
 
@@ -34,7 +36,7 @@ pub fn cross_reference_orders(
                 continue;
             }
 
-            if !is_name_match(order, time_activity) {
+            if !is_name_match(&lower_emp, time_activity, order.expanded) {
                 continue;
             }
 
@@ -42,6 +44,8 @@ pub fn cross_reference_orders(
                 entry.hours = time_activity.hours;
                 entry.miles = time_activity.miles;
                 matched += 1;
+                time_activity.matched = true;
+
                 break;
             }
         }
@@ -52,5 +56,6 @@ pub fn cross_reference_orders(
     ReferenceResult {
         rows: to_write,
         matched,
+        skipped,
     }
 }

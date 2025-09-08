@@ -108,14 +108,22 @@ pub fn deserialize_intuit_excel(file_path: &str) -> Result<Vec<TimeActivity>> {
             Err(_) => continue,
         };
 
+        let out_result = deserialize_string_date(row.get(4));
+        let out_time = match out_result {
+            Ok(dt) => dt,
+            Err(_) => continue,
+        };
+
         let first_name = deserialize_string_cell(row.first(), "");
         let last_name = deserialize_string_cell(row.get(1), "");
-        let full_name = format!("{} {}", first_name, last_name);
+        // let full_name = format!("{} {}", first_name, last_name);
 
         let activity = TimeActivity {
             first_name,
-            full_name,
+            last_name,
+            // full_name,
             in_time,
+            out_time,
             hours: deserialize_float_cell(row.get(6), 0.0),
             miles: deserialize_float_cell(row.get(7), 0.0),
             matched: false,

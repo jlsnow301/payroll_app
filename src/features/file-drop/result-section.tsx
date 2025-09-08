@@ -60,9 +60,11 @@ export function ResultSection(props: Props) {
 }
 
 function ViewStats(props: ProcessResult) {
-  const { matched = 0, total = 1, missing = 0, expanded = 0 } = props;
+  const { matched = 0, skipped = 0, total = 1, expanded = 0 } = props;
 
-  const accuracy = (missing / total * 100).toFixed(2);
+  const valid = total - skipped;
+  const missing = valid - matched;
+  const accuracy = (matched / valid * 100).toFixed(2);
 
   return (
     <Dialog>
@@ -75,11 +77,11 @@ function ViewStats(props: ProcessResult) {
         <DialogHeader>
           <DialogTitle>Processing Results</DialogTitle>
         </DialogHeader>
-        Overall, the application produced {total} orders with {matched}{" "}
+        Overall, the application wrote {total} orders with {matched}{" "}
         timesheet matches. Given the sensitivity, it had{" "}
-        {accuracy}% matching accuracy ({missing}{" "}
-        missing). Orders with multiple assignees were expanded to produce{" "}
-        {expanded} rows, highlighted in yellow.
+        {accuracy}% accuracy ({`${missing} missing, ${skipped} skipped`}).
+        Orders with multiple assignees were expanded to produce {expanded}{" "}
+        rows, highlighted in yellow.
       </DialogContent>
     </Dialog>
   );

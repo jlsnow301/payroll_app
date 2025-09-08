@@ -23,6 +23,7 @@ import { FileDropButton } from "./file-drop-button";
 import { ResultSection } from "./result-section";
 import { Button } from "@/components/ui/button";
 import { RefreshCcw } from "lucide-react";
+import { invoke } from "@tauri-apps/api/core";
 
 export function FileDropCard() {
   const [precision, setPrecision] = useState(1);
@@ -57,6 +58,11 @@ export function FileDropCard() {
       <CardHeader>
         <CardTitle className="text-xl flex justify-between h-8">
           <span>🗃 Payroll App</span>
+          <Button
+            onClick={() => invoke("debug", { precision })}
+          >
+            Run
+          </Button>
           {!submitMut.isIdle && (
             <Button onClick={reset} size="sm" variant="ghost">
               <RefreshCcw /> Reset

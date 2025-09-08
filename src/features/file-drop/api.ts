@@ -18,7 +18,7 @@ export function useIntuitMutation() {
 export type ProcessResult = {
   expanded: number;
   matched: number;
-  missing: number;
+  skipped: number;
   total: number;
 };
 

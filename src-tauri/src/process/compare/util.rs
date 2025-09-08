@@ -2,7 +2,7 @@ use std::sync::LazyLock;
 
 use chrono::{DateTime, Duration, Utc};
 
-use crate::process::deserialize::{Order, TimeActivity};
+use crate::process::deserialize::TimeActivity;
 
 static INVALID_NAMES: LazyLock<Vec<String>> =
     LazyLock::new(|| vec!["patio party".to_string(), "pickup".to_string()]);
@@ -15,17 +15,15 @@ pub fn is_within_time(time_a: &DateTime<Utc>, time_b: &DateTime<Utc>, precision:
     diff <= duration_limit
 }
 
-pub fn is_name_match(order: &Order, time_activity: &TimeActivity) -> bool {
-    let lower_emp = order.employee.to_lowercase();
-
-    if !order.expanded {
-        let time_name = time_activity.full_name.to_lowercase();
-        if lower_emp != time_name {
+pub fn is_name_match(driver: &str, time_activity: &TimeActivity, is_expanded: bool) -> bool {
+    if !is_expanded {
+        let time_name = time_activity.last_name.to_lowercase();
+        if !driver.contains(time_name.as_str()) {
             return false;
         }
     } else {
         let time_name = time_activity.first_name.to_lowercase();
-        if !lower_emp
+        if !driver
             .split(" ")
             .next()
             .unwrap()
@@ -38,8 +36,8 @@ pub fn is_name_match(order: &Order, time_activity: &TimeActivity) -> bool {
     true
 }
 
-pub fn is_valid_order(name: String) -> bool {
-    if name.is_empty() {
+pub fn is_valid_order(name: &str) -> bool {
+    if name.trim().is_empty() {
         return false;
     }
 
