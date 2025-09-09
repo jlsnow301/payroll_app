@@ -17,7 +17,6 @@ pub struct Order {
     pub datetime: DateTime<Utc>,
     // Order has been expanded for having multiple drivers
     pub expanded: bool,
-    pub nearest: DateTime<Utc>,
 }
 
 #[derive(Clone, Debug, Serialize)]

@@ -2,7 +2,7 @@ use std::sync::LazyLock;
 
 use chrono::{DateTime, Duration, Utc};
 
-use crate::process::deserialize::TimeActivity;
+use crate::deserialize::TimeActivity;
 
 static INVALID_NAMES: LazyLock<Vec<String>> =
     LazyLock::new(|| vec!["patio party".to_string(), "pickup".to_string()]);

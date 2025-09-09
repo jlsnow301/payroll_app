@@ -1,4 +1,4 @@
-use crate::process::{
+use crate::{
     compare::PreparedRow,
     write::{
         util::{write_header_row, write_order_date},

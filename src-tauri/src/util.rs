@@ -1,34 +1,16 @@
 use crate::{
-    process::{
-        compare::ReferenceResult,
-        deserialize::{deserialize_caterease_excel, deserialize_intuit_excel, Order, TimeActivity},
-        get_references,
-        validate::{validate_order_input, validate_time_input},
-        write_excel,
-    },
-    AppState,
+    compare::{cross_reference_orders, ReferenceResult},
+    deserialize::{deserialize_caterease_excel, deserialize_intuit_excel, Order, TimeActivity},
+    expand::expand_orders,
+    handlers::AppState,
+    validate::{validate_order_input, validate_time_input},
+    write::{build_themes, write_prepared_rows, write_unmatched_rows},
 };
-use anyhow::{anyhow, Result};
-use serde::Serialize;
+use anyhow::{anyhow, Context, Result};
+use rust_xlsxwriter::workbook::Workbook;
 use std::{path::Path, sync::MutexGuard};
-use tauri_plugin_opener::reveal_item_in_dir;
 
 pub const OUTPUT_PATH: &str = "formatted_payroll.xlsx";
-
-/**
-* # Util
-*
-* This file is for the reusable services underneath route handlers
-*
-*/
-
-#[derive(Serialize)]
-pub struct ProcessResult {
-    pub expanded: usize,
-    pub matched: u32,
-    pub skipped: u32,
-    pub total: usize,
-}
 
 pub fn get_filename(path: &Path) -> String {
     path.file_name()
@@ -74,53 +56,41 @@ pub fn get_timesheet(file_path: &str) -> Result<Vec<TimeActivity>> {
     Ok(timesheets)
 }
 
-pub fn handle_review(
-    precision: usize,
+pub fn get_references(
+    precision: i64,
     state: &mut MutexGuard<'_, AppState>,
 ) -> Result<ReferenceResult> {
     if state.caterease.is_empty() || state.intuit.is_empty() {
         return Err(anyhow!("Both documents must be linked"));
     }
+    let mut expanded = expand_orders(&state.caterease);
 
-    let mut cloned_timesheet = state.intuit.clone();
+    let reference_result = cross_reference_orders(&mut expanded, &mut state.intuit, precision);
 
-    let referenced = get_references(
-        &mut state.caterease,
-        &mut cloned_timesheet,
-        precision as i64,
-    )?;
-
-    Ok(referenced)
+    Ok(reference_result)
 }
 
-pub fn handle_submit(
-    precision: usize,
-    state: &mut MutexGuard<'_, AppState>,
-) -> Result<ProcessResult> {
-    if state.caterease.is_empty() || state.intuit.is_empty() {
-        return Err(anyhow!("Both documents must be linked"));
-    }
+pub fn write_excel(referenced: &ReferenceResult, intuit: &[TimeActivity]) -> Result<()> {
+    let mut workbook = Workbook::new();
+    let orders_sheet = workbook
+        .add_worksheet()
+        .set_name("Orders")
+        .context("Couldn't add orders worksheet")?;
 
-    let mut cloned_timesheet = state.intuit.clone();
+    let themes = build_themes();
 
-    let referenced = get_references(
-        &mut state.caterease,
-        &mut cloned_timesheet,
-        precision as i64,
-    )?;
+    write_prepared_rows(orders_sheet, &referenced.rows, &themes)?;
 
-    let total = referenced.rows.len();
+    let unmatched_sheet = workbook
+        .add_worksheet()
+        .set_name("Unmatched")
+        .context("Couldn't add unmatched sheet")?;
 
-    write_excel(&referenced, &state.intuit).map_err(|e| e.to_string());
+    write_unmatched_rows(unmatched_sheet, intuit, &themes)?;
 
-    let result = ProcessResult {
-        expanded: total - state.caterease.len(),
-        matched: referenced.matched.clone(),
-        skipped: referenced.skipped,
-        total,
-    };
+    workbook
+        .save(OUTPUT_PATH)
+        .context("Couldn't save workbook")?;
 
-    reveal_item_in_dir(OUTPUT_PATH).unwrap();
-
-    Ok(result)
+    Ok(())
 }

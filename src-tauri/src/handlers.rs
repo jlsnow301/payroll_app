@@ -2,23 +2,27 @@ use serde::Serialize;
 use serde_json::{json, Value};
 use std::sync::Mutex;
 use tauri::State;
+use tauri_plugin_opener::reveal_item_in_dir;
 
 use crate::{
-    process::deserialize::{Order, TimeActivity},
-    util::{get_filename, get_orders, get_path, get_timesheet, handle_review, handle_submit},
+    deserialize::{Order, TimeActivity},
+    util::{
+        get_filename, get_orders, get_path, get_references, get_timesheet, write_excel, OUTPUT_PATH,
+    },
 };
-
-/**
-* ## Handlers
-*
-* This file is in charge of routing front end requests to their associated services
-* and returning a web-friendly result
-*/
 
 #[derive(Clone, Default, Serialize)]
 pub struct AppState {
     pub caterease: Vec<Order>,
     pub intuit: Vec<TimeActivity>,
+}
+
+#[derive(Serialize)]
+struct ProcessResult {
+    expanded: usize,
+    matched: u32,
+    skipped: u32,
+    total: usize,
 }
 
 #[tauri::command]
@@ -61,7 +65,7 @@ pub fn intuit_input(
 pub fn manual_review(precision: usize, state: State<'_, Mutex<AppState>>) -> Result<Value, String> {
     let mut state = state.lock().unwrap();
 
-    let referenced = handle_review(precision, &mut state).map_err(|e| e.to_string())?;
+    let referenced = get_references(precision as i64, &mut state).map_err(|e| e.to_string())?;
 
     Ok(json!(referenced))
 }
@@ -70,7 +74,20 @@ pub fn manual_review(precision: usize, state: State<'_, Mutex<AppState>>) -> Res
 pub fn submit(precision: usize, state: State<'_, Mutex<AppState>>) -> Result<Value, String> {
     let mut state = state.lock().unwrap();
 
-    let processed = handle_submit(precision, &mut state).map_err(|e| e.to_string())?;
+    let referenced = get_references(precision as i64, &mut state).map_err(|e| e.to_string())?;
 
-    Ok(json!(processed))
+    let total = referenced.rows.len();
+
+    write_excel(&referenced, &state.intuit).map_err(|e| e.to_string())?;
+
+    let result = ProcessResult {
+        expanded: total - state.caterease.len(),
+        matched: referenced.matched,
+        skipped: referenced.skipped,
+        total,
+    };
+
+    reveal_item_in_dir(OUTPUT_PATH).unwrap();
+
+    Ok(json!(result))
 }

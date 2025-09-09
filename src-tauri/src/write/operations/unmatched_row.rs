@@ -1,4 +1,4 @@
-use crate::process::{deserialize::TimeActivity, write::ExcelThemes};
+use crate::{deserialize::TimeActivity, write::ExcelThemes};
 use anyhow::Result;
 use rust_xlsxwriter::worksheet::Worksheet;
 

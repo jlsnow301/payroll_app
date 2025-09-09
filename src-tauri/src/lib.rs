@@ -4,9 +4,13 @@ use tauri::{Builder, Manager};
 
 use crate::handlers::{caterease_input, intuit_input, manual_review, submit, AppState};
 
+mod compare;
+mod deserialize;
+mod expand;
 mod handlers;
-mod process;
 mod util;
+mod validate;
+mod write;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
