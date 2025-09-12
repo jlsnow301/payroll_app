@@ -85,7 +85,7 @@ export function HomePage() {
               mutation={intuitMut}
               reset={handleFileInput}
               title="Intuit"
-              tooltipContent="Requires an export from Intuit. Find this in the 'reports' section. Contains miles and a timesheet page."
+              tooltipContent="Requires an export from Intuit. Find this under reports - tracking - mileage."
             />
             <div className="flex flex-col gap-2 items-center justify-center">
               <Tooltip delayDuration={500}>

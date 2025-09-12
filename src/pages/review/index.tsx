@@ -2,10 +2,29 @@ import { Button } from "@/components/ui/button.tsx";
 import { PurpleBg } from "@/features/animated-bg/stars.tsx";
 import { Page, usePrecision, useSimpleRouter } from "@/hooks.ts";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { Check, Undo, X } from "lucide-react";
+import { Undo } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useGetReview, useReviewMutation } from "./api.ts";
+import { PreparedRow, useGetReview, useReviewMutation } from "./api.ts";
 import { OrderCard } from "./order-card.tsx";
+
+type PreparedRowExt = {
+  id: number;
+  approved: boolean;
+} & PreparedRow;
+
+function addInitialValues(rows: PreparedRow[] | undefined): PreparedRowExt[] {
+  if (!rows || rows.length === 0) {
+    return [];
+  }
+
+  return rows.map((row, id) => {
+    return {
+      ...row,
+      id,
+      approved: true,
+    };
+  });
+}
 
 export function ReviewPage() {
   const [_page, setPage] = useSimpleRouter();
@@ -14,23 +33,22 @@ export function ReviewPage() {
   const { data } = useGetReview(precision);
   const reviewMut = useReviewMutation();
 
-  const withId = useMemo(() => {
-    if (!data || data.rows.length === 0) {
-      return [];
-    }
-
-    return data.rows.map((row, id) => ({
-      ...row,
-      id,
-      approved: true,
-    }));
-  }, [data]);
-
-  const [matches, setMatches] = useState(withId);
+  const withId = useMemo(() => addInitialValues(data?.rows), [data?.rows]);
+  const [matches, setMatches] = useState(() => withId);
 
   useEffect(() => {
-    if (withId.length > 0) setMatches(withId);
-  }, [data]);
+    setMatches(withId);
+  }, [withId]);
+
+  function handleClick(id: number) {
+    const entry = matches[id];
+
+    if (entry.approved) {
+      handleReject(id);
+    } else {
+      handleReset(id);
+    }
+  }
 
   function handleReject(id: number) {
     const newOrders = [...matches];
@@ -62,8 +80,10 @@ export function ReviewPage() {
 
   const parentRef = useRef<HTMLDivElement>(null);
 
+  const filtered = withId.filter((row) => row.suggestedIn);
+
   const rowVirtualizer = useVirtualizer({
-    count: withId.length,
+    count: filtered.length,
     getScrollElement: () => parentRef.current,
     estimateSize: () => 96,
   });
@@ -81,17 +101,16 @@ export function ReviewPage() {
               height: `${rowVirtualizer.getTotalSize()}px`,
             }}
           >
-            {withId.filter((row) => row.suggestedIn).map((row) => {
+            {filtered.map((row) => {
               const corresponding = matches?.[row.id]?.approved;
 
               return (
-                <div className="flex w-7/8 items-center gap-4" key={row.id}>
+                <div
+                  className="w-7/8 hover:cursor-pointer"
+                  onClick={handleClick.bind(null, row.id)}
+                  key={row.id}
+                >
                   <OrderCard row={row} approved={corresponding} />
-                  {corresponding
-                    ? (
-                      <Check onClick={() => handleReject(row.id)} />
-                    )
-                    : <X onClick={() => handleReset(row.id)} />}
                 </div>
               );
             })}
@@ -103,10 +122,19 @@ export function ReviewPage() {
             className="w-36"
             variant="secondary"
           >
-            <Undo /> Nevermind
+            <Undo /> {reviewMut.isIdle ? "Nevermind" : "Return"}
           </Button>
-          <span>Viewing {matches.length} Matches</span>
-          <Button onClick={() => reviewMut.mutate(matches)} className="w-36">
+          <div className="flex flex-col items-center justify-center">
+            <span>Viewing {matches.length} Matches</span>
+            <span className="text-xs text-muted-foreground">
+              Click to reject
+            </span>
+          </div>
+          <Button
+            disabled={!reviewMut.isIdle}
+            onClick={() => reviewMut.mutate(matches)}
+            className="w-36"
+          >
             Submit
           </Button>
         </div>

@@ -6,19 +6,19 @@ export const dateFormatter = new Intl.DateTimeFormat("en-us", {
 export const timeFormatter = new Intl.DateTimeFormat("en-us", {
   hour: "2-digit",
   minute: "2-digit",
-  hour12: false,
+  hour12: true,
   timeZone: "America/Los_Angeles",
 });
 
-export function excelTimeToHHMM(excelTime: number): string {
+export function excelTimeTo12Hour(excelTime: number): string {
   const totalMinutes = Math.round(excelTime * 24 * 60);
-
-  const hours = Math.floor(totalMinutes / 60);
+  const hours24 = Math.floor(totalMinutes / 60) % 24;
   const minutes = totalMinutes % 60;
 
-  return `${hours.toString().padStart(2, "0")}:${
-    minutes.toString().padStart(2, "0")
-  }`;
+  const period = hours24 >= 12 ? "PM" : "AM";
+  const hour12 = hours24 % 12 === 0 ? 12 : hours24 % 12;
+
+  return `${hour12}:${minutes.toString().padStart(2, "0")} ${period}`;
 }
 
 export enum Threshold {

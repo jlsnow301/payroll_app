@@ -3,7 +3,7 @@ import { Denied } from "@/features/denied.tsx";
 import {
   compareDateTimes,
   dateFormatter,
-  excelTimeToHHMM,
+  excelTimeTo12Hour,
   timeFormatter,
 } from "@/features/time.ts";
 import { usePrecision } from "@/hooks.ts";
@@ -42,7 +42,7 @@ export function OrderCard(props: Props) {
         <div className="relative flex flex-1 justify-between">
           <TimeDisplay
             icon={<CookingPot />}
-            time={excelTimeToHHMM(row.order.ready)}
+            time={excelTimeTo12Hour(row.order.ready)}
             label="Kitchen Ready"
           />
           <TimeDisplay
