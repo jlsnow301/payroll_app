@@ -38,7 +38,7 @@ pub fn caterease_input(
 
     state.caterease = orders;
 
-    let file_name = get_filename(path);
+    let file_name = get_filename(&path);
 
     Ok(file_name)
 }
@@ -56,7 +56,7 @@ pub fn intuit_input(
 
     state.intuit = timesheets;
 
-    let file_name = get_filename(path);
+    let file_name = get_filename(&path);
 
     Ok(file_name)
 }

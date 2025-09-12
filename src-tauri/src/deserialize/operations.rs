@@ -1,4 +1,4 @@
-use anyhow::{Context, Result};
+use anyhow::{anyhow, Context, Result};
 use calamine::{open_workbook, Reader, Xlsx};
 
 use crate::{
@@ -36,6 +36,11 @@ pub fn deserialize_caterease_excel(file_path: &str) -> Result<Vec<Order>> {
             "Subtotal",
         ],
     )?;
+
+    // There must be at least one header, one order, and one sum row
+    if worksheet.height() < 3 {
+        return Err(anyhow!("Not enough orders"));
+    }
 
     let mut orders = Vec::new();
 

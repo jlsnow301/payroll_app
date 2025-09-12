@@ -7,7 +7,10 @@ use crate::{
 };
 
 use anyhow::{anyhow, Result};
-use std::{path::Path, sync::MutexGuard};
+use std::{
+    path::{Path, PathBuf},
+    sync::MutexGuard,
+};
 
 pub const OUTPUT_PATH: &str = "formatted_payroll.xlsx";
 
@@ -19,14 +22,14 @@ pub fn get_filename(path: &Path) -> String {
         .replace(".xlsx", "")
 }
 
-pub fn get_path(file_path: &str) -> Result<&Path> {
+pub fn get_path(file_path: &str) -> Result<PathBuf> {
     let path = Path::new(file_path);
 
     if !path.exists() {
         return Err(anyhow!("File doesn't exist"));
     }
 
-    Ok(path)
+    Ok(path.to_path_buf())
 }
 
 pub fn get_orders(file_path: &str) -> Result<Vec<Order>> {
@@ -35,9 +38,7 @@ pub fn get_orders(file_path: &str) -> Result<Vec<Order>> {
         Err(e) => return Err(anyhow!(e)),
     };
 
-    if let Err(e) = validate_order_input(&orders) {
-        return Err(anyhow!(e));
-    }
+    validate_order_input(&orders)?;
 
     Ok(orders)
 }
@@ -48,9 +49,7 @@ pub fn get_timesheet(file_path: &str) -> Result<Vec<TimeActivity>> {
         Err(e) => return Err(anyhow!(e)),
     };
 
-    if let Err(e) = validate_time_input(&timesheets) {
-        return Err(anyhow!(e));
-    }
+    validate_time_input(&timesheets)?;
 
     Ok(timesheets)
 }
