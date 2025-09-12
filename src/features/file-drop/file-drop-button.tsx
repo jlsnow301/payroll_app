@@ -2,13 +2,13 @@ import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { green500 } from "@/constants";
+} from "@/components/ui/tooltip.tsx";
+import { green500 } from "@/constants.ts";
 import { UseMutationResult } from "@tanstack/react-query";
 import { desktopDir } from "@tauri-apps/api/path";
 import { open } from "@tauri-apps/plugin-dialog";
 import { FileCheck, Loader, TriangleAlert, Upload } from "lucide-react";
-import { useDropZone } from "./dropzone";
+import { useDropZone } from "./dropzone.ts";
 
 type FileDropProps = {
   mutation: UseMutationResult<string, Error, string, unknown>;
