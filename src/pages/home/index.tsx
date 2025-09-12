@@ -13,17 +13,17 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { PurpleBg, StarBg, Stars } from "@/features/animated-bg/stars";
+import { PurpleBg, Stars } from "@/features/animated-bg/stars";
+import { FileDropButton } from "@/features/file-drop/file-drop-button";
+import { Page, usePrecision, useSimpleRouter } from "@/hooks";
+import { RefreshCcw } from "lucide-react";
 import {
   useCatereaseMutation,
   useIntuitMutation,
   useSubmitMutation,
 } from "./api";
 import { ErrorAlert } from "./error-alert";
-import { FileDropButton } from "@/features/file-drop/file-drop-button";
 import { ResultSection } from "./result-section";
-import { Page, usePrecision, useSimpleRouter } from "@/hooks";
-import { RefreshCcw } from "lucide-react";
 
 export function HomePage() {
   const [_page, setPage] = useSimpleRouter();
