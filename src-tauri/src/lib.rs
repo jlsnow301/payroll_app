@@ -2,7 +2,9 @@ use std::sync::Mutex;
 
 use tauri::{Builder, Manager};
 
-use crate::handlers::{caterease_input, intuit_input, manual_review, submit, AppState};
+use crate::handlers::{
+    caterease_input, intuit_input, manual_input, manual_review, submit, AppState,
+};
 
 mod compare;
 mod deserialize;
@@ -24,6 +26,7 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             caterease_input,
             intuit_input,
+            manual_input,
             manual_review,
             submit
         ])

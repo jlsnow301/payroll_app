@@ -39,36 +39,30 @@ pub fn deserialize_caterease_excel(file_path: &str) -> Result<Vec<Order>> {
 
     let mut orders = Vec::new();
 
-    let last = worksheet.height() - 2;
-    for (index, row) in worksheet.rows().enumerate() {
-        match index {
-            0 => continue,
-            i if i == last => break,
-            _ => {
-                let datetime = match join_date_and_time(row.first(), row.get(8)) {
-                    Some(dt) => dt,
-                    None => continue,
-                };
+    for row in worksheet.rows().skip(1).take(worksheet.height() - 2) {
+        let datetime = match join_date_and_time(row.first(), row.get(8)) {
+            Some(dt) => dt,
+            None => continue,
+        };
 
-                let order = Order {
-                    date: deserialize_date_cell(row.first(), 45658.0),
-                    employee: deserialize_string_cell(row.get(1), ""),
-                    client: deserialize_string_cell(row.get(2), ""),
-                    description: deserialize_string_cell(row.get(3), ""),
-                    count: deserialize_int_cell(row.get(4), 0),
-                    grat: deserialize_float_cell(row.get(5), 0.0),
-                    origin: deserialize_string_cell(row.get(6), ""),
-                    event: deserialize_string_cell(row.get(7), ""),
-                    ready: deserialize_date_cell(row.get(8), 0.0),
-                    total: deserialize_float_cell(row.get(9), 0.0),
-                    datetime,
-                    expanded: false,
-                };
+        let order = Order {
+            date: deserialize_date_cell(row.first(), 45658.0),
+            employee: deserialize_string_cell(row.get(1), ""),
+            client: deserialize_string_cell(row.get(2), ""),
+            description: deserialize_string_cell(row.get(3), ""),
+            count: deserialize_int_cell(row.get(4), 0),
+            grat: deserialize_float_cell(row.get(5), 0.0),
+            origin: deserialize_string_cell(row.get(6), ""),
+            event: deserialize_string_cell(row.get(7), ""),
+            ready: deserialize_date_cell(row.get(8), 0.0),
+            total: deserialize_float_cell(row.get(9), 0.0),
+            datetime,
+            expanded: false,
+        };
 
-                orders.push(order);
-            }
-        }
+        orders.push(order);
     }
+
     Ok(orders)
 }
 
@@ -116,12 +110,10 @@ pub fn deserialize_intuit_excel(file_path: &str) -> Result<Vec<TimeActivity>> {
 
         let first_name = deserialize_string_cell(row.first(), "");
         let last_name = deserialize_string_cell(row.get(1), "");
-        // let full_name = format!("{} {}", first_name, last_name);
 
         let activity = TimeActivity {
             first_name,
             last_name,
-            // full_name,
             in_time,
             out_time,
             hours: deserialize_float_cell(row.get(6), 0.0),

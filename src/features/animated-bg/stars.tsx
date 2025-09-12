@@ -1,3 +1,5 @@
+import { PropsWithChildren, useMemo } from "react";
+
 type Star = {
   id: number;
   x: number;
@@ -20,8 +22,21 @@ function generateStars(count: number): Star[] {
   });
 }
 
-export function StarBg() {
-  const stars = generateStars(150);
+export function PurpleBg(props: PropsWithChildren) {
+  const { children } = props;
+
+  return (
+    <div className="
+      flex flex-1 justify-center items-center
+      bg-gradient-to-br from-purple-900 via-violet-800 to-indigo-800
+      relative overflow-hidden">
+      {children}
+    </div>
+  );
+}
+
+export function Stars() {
+  const stars = useMemo(() => generateStars(150), []);
 
   return (
     <>

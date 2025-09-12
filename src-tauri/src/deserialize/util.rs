@@ -1,6 +1,7 @@
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 use calamine::{Data, DataType, ExcelDateTime, ExcelDateTimeType};
 use chrono::{DateTime, Duration, NaiveDate, NaiveDateTime, NaiveTime, Utc};
+use chrono_tz::{America::Los_Angeles, US::Pacific};
 
 pub fn deserialize_string_cell(cell: Option<&Data>, default: &str) -> String {
     cell.and_then(|cell| cell.get_string())
@@ -51,7 +52,14 @@ pub fn deserialize_string_date(cell: Option<&Data>) -> Result<DateTime<Utc>> {
 
     let parsed = NaiveDateTime::parse_from_str(string_date, "%Y-%m-%d %H:%M:%S")?;
 
-    Ok(DateTime::from_naive_utc_and_offset(parsed, Utc))
+    let pacific_time = parsed
+        .and_local_timezone(Pacific)
+        .single()
+        .ok_or_else(|| anyhow!("Couldn't convert time"))?;
+
+    let to_utc = pacific_time.with_timezone(&Utc);
+
+    Ok(to_utc)
 }
 
 pub fn join_date_and_time(
@@ -76,7 +84,8 @@ pub fn join_date_and_time(
 
     let naive_datetime = date.and_time(time);
 
-    let dt: DateTime<Utc> = DateTime::from_naive_utc_and_offset(naive_datetime, Utc);
+    let pacific_dt = naive_datetime.and_local_timezone(Los_Angeles).single()?;
+    let utc_dt = pacific_dt.to_utc();
 
-    Some(dt)
+    Some(utc_dt)
 }

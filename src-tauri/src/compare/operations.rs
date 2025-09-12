@@ -20,7 +20,8 @@ pub fn cross_reference_orders(
             order: order.clone(),
             hours: 0.0,
             miles: 0.0,
-            nearest: None,
+            suggested_in: None,
+            suggested_out: None,
         };
 
         let lower_emp = order.employee.to_lowercase();
@@ -43,7 +44,9 @@ pub fn cross_reference_orders(
             if is_within_time(&order.datetime, &time_activity.in_time, precision) {
                 entry.hours = time_activity.hours;
                 entry.miles = time_activity.miles;
-                entry.nearest = Some(time_activity.in_time);
+                entry.suggested_in = Some(time_activity.in_time);
+                entry.suggested_out = Some(time_activity.out_time);
+
                 matched += 1;
                 time_activity.matched = true;
 

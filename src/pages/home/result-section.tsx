@@ -1,13 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { CircleAlert, CircleCheck } from "lucide-react";
-import { green500, red500 } from "./constants";
-import { UseMutationResult } from "@tanstack/react-query";
-import { ProcessResult } from "./api";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import {
   Dialog,
   DialogContent,
@@ -15,15 +6,37 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { green500, red500 } from "@/constants";
+import { UseMutationResult } from "@tanstack/react-query";
+import {
+  CircleAlert,
+  CircleCheck,
+  ListChecks,
+  WandSparkles,
+} from "lucide-react";
+import { ProcessResult } from "./api";
 
 type Props = {
   mutation: UseMutationResult<ProcessResult, Error, number, unknown>;
   ready: boolean;
+  onReview: () => void;
   onSubmit: () => void;
 };
 
 export function ResultSection(props: Props) {
-  const { mutation, ready, onSubmit } = props;
+  const { mutation, ready, onReview, onSubmit } = props;
+
+  let submitIcon = <WandSparkles />;
+  if (mutation.isSuccess) {
+    submitIcon = <CircleCheck color={green500} />;
+  } else if (mutation.isError) {
+    submitIcon = <CircleAlert color={red500} />;
+  }
 
   return (
     <div className="flex flex-1 gap-2 justify-between items-center">
@@ -31,26 +44,37 @@ export function ResultSection(props: Props) {
         {mutation.isSuccess && <ViewStats {...mutation.data} />}
       </div>
       <div className="flex gap-2 items-center">
-        {mutation.isSuccess && (
-          <CircleCheck className="animate-vanishing" color={green500} />
-        )}
-        {mutation.isError && (
-          <CircleAlert className="animate-vanishing" color={red500} />
-        )}
         <Tooltip delayDuration={500}>
-          <TooltipTrigger>
+          <TooltipTrigger asChild>
+            <Button
+              disabled={!ready}
+              onClick={onReview}
+              className="w-36"
+              size="lg"
+            >
+              <ListChecks /> Manual
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            {ready
+              ? "Manually approve time suggestions"
+              : "Both files must be uploaded and valid"}
+          </TooltipContent>
+        </Tooltip>
+        <Tooltip delayDuration={500}>
+          <TooltipTrigger asChild>
             <Button
               disabled={!ready}
               onClick={onSubmit}
               className="w-36"
               size="lg"
             >
-              {mutation.isSuccess ? "Done" : ready ? "Submit" : "Waiting"}
+              {submitIcon} Auto
             </Button>
           </TooltipTrigger>
           <TooltipContent>
             {ready
-              ? "Click to process the file"
+              ? "Assign all matches within the precision"
               : "Both files must be uploaded and valid"}
           </TooltipContent>
         </Tooltip>

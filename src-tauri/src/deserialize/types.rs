@@ -1,7 +1,7 @@
 use chrono::{DateTime, Utc};
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Debug, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Order {
     pub date: f64,
     pub employee: String,
@@ -23,7 +23,6 @@ pub struct Order {
 pub struct TimeActivity {
     pub first_name: String,
     pub last_name: String,
-    // pub full_name: String,
     pub in_time: DateTime<Utc>,
     pub out_time: DateTime<Utc>,
     pub hours: f64,

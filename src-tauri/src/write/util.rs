@@ -1,4 +1,6 @@
 use anyhow::Result;
+use chrono::{DateTime, Utc};
+use chrono_tz::US::Pacific;
 use rust_xlsxwriter::{worksheet::Worksheet, ExcelDateTime, Format, FormatAlign};
 
 pub fn write_order_date(
@@ -14,6 +16,21 @@ pub fn write_order_date(
     Ok(())
 }
 
+pub fn write_order_timestamp(
+    worksheet: &mut Worksheet,
+    row: u32,
+    col: u16,
+    timestamp: DateTime<Utc>,
+    format: &Format,
+) -> Result<()> {
+    let pacific_time = timestamp.with_timezone(&Pacific);
+    let chrono_dt = pacific_time.naive_local();
+
+    worksheet.write_datetime_with_format(row, col, chrono_dt, format)?;
+
+    Ok(())
+}
+
 pub fn write_header_row(worksheet: &mut Worksheet, row: u32, format: &Format) -> Result<()> {
     let right_header = format.clone().set_align(FormatAlign::Right);
 
@@ -25,8 +42,13 @@ pub fn write_header_row(worksheet: &mut Worksheet, row: u32, format: &Format) ->
         vec!["Count", "Hours", "Miles", "Grat"],
         &right_header,
     )?;
-    worksheet.write_row(row, 8, vec!["Origin", "SubEvent", "Ready"])?;
-    worksheet.write_string_with_format(row, 11, "Subtotal", &right_header)?;
+    worksheet.write_row(row, 8, vec!["Origin", "SubEvent"])?;
+    worksheet.write_row_with_format(
+        row,
+        10,
+        vec!["Ready", "Subtotal", "Clock In", "Clock Out"],
+        &right_header,
+    )?;
 
     Ok(())
 }

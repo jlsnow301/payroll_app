@@ -4,10 +4,9 @@ use crate::{
     expand::expand_orders,
     handlers::AppState,
     validate::{validate_order_input, validate_time_input},
-    write::{build_themes, write_prepared_rows, write_unmatched_rows},
 };
-use anyhow::{anyhow, Context, Result};
-use rust_xlsxwriter::workbook::Workbook;
+
+use anyhow::{anyhow, Result};
 use std::{path::Path, sync::MutexGuard};
 
 pub const OUTPUT_PATH: &str = "formatted_payroll.xlsx";
@@ -68,29 +67,4 @@ pub fn get_references(
     let reference_result = cross_reference_orders(&mut expanded, &mut state.intuit, precision);
 
     Ok(reference_result)
-}
-
-pub fn write_excel(referenced: &ReferenceResult, intuit: &[TimeActivity]) -> Result<()> {
-    let mut workbook = Workbook::new();
-    let orders_sheet = workbook
-        .add_worksheet()
-        .set_name("Orders")
-        .context("Couldn't add orders worksheet")?;
-
-    let themes = build_themes();
-
-    write_prepared_rows(orders_sheet, &referenced.rows, &themes)?;
-
-    let unmatched_sheet = workbook
-        .add_worksheet()
-        .set_name("Unmatched")
-        .context("Couldn't add unmatched sheet")?;
-
-    write_unmatched_rows(unmatched_sheet, intuit, &themes)?;
-
-    workbook
-        .save(OUTPUT_PATH)
-        .context("Couldn't save workbook")?;
-
-    Ok(())
 }

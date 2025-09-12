@@ -1,14 +1,16 @@
 use chrono::{DateTime, Utc};
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 use crate::deserialize::Order;
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct PreparedRow {
     pub order: Order,
     pub hours: f64,
     pub miles: f64,
-    pub nearest: Option<DateTime<Utc>>,
+    pub suggested_in: Option<DateTime<Utc>>,
+    pub suggested_out: Option<DateTime<Utc>>,
 }
 
 #[derive(Debug, Serialize)]

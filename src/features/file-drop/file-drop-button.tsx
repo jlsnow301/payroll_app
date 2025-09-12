@@ -1,14 +1,14 @@
-import { UseMutationResult } from "@tanstack/react-query";
-import { FileCheck, Loader, TriangleAlert, Upload } from "lucide-react";
-import { green500 } from "./constants.ts";
-import { useDropZone } from "./dropzone.ts";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@/components/ui/tooltip.tsx";
-import { open } from "@tauri-apps/plugin-dialog";
+} from "@/components/ui/tooltip";
+import { green500 } from "@/constants";
+import { UseMutationResult } from "@tanstack/react-query";
 import { desktopDir } from "@tauri-apps/api/path";
+import { open } from "@tauri-apps/plugin-dialog";
+import { FileCheck, Loader, TriangleAlert, Upload } from "lucide-react";
+import { useDropZone } from "./dropzone";
 
 type FileDropProps = {
   mutation: UseMutationResult<string, Error, string, unknown>;
@@ -59,7 +59,7 @@ export function FileDropButton(props: FileDropProps) {
 
   return (
     <Tooltip delayDuration={500}>
-      <TooltipTrigger>
+      <TooltipTrigger asChild>
         <button
           type="button"
           ref={ref}

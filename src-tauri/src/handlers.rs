@@ -5,13 +5,13 @@ use tauri::State;
 use tauri_plugin_opener::reveal_item_in_dir;
 
 use crate::{
+    compare::PreparedRow,
     deserialize::{Order, TimeActivity},
-    util::{
-        get_filename, get_orders, get_path, get_references, get_timesheet, write_excel, OUTPUT_PATH,
-    },
+    util::{get_filename, get_orders, get_path, get_references, get_timesheet, OUTPUT_PATH},
+    write::WorkbookWriter,
 };
 
-#[derive(Clone, Default, Serialize)]
+#[derive(Clone, Default)]
 pub struct AppState {
     pub caterease: Vec<Order>,
     pub intuit: Vec<TimeActivity>,
@@ -71,6 +71,20 @@ pub fn manual_review(precision: usize, state: State<'_, Mutex<AppState>>) -> Res
 }
 
 #[tauri::command]
+pub fn manual_input(rows: Vec<PreparedRow>) -> Result<String, String> {
+    let mut excel_writer = WorkbookWriter::new();
+    excel_writer
+        .write_prepared(&rows)
+        .map_err(|e| e.to_string())?;
+
+    excel_writer.save().map_err(|e| e.to_string())?;
+
+    reveal_item_in_dir(OUTPUT_PATH).unwrap();
+
+    Ok("Success".to_string())
+}
+
+#[tauri::command]
 pub fn submit(precision: usize, state: State<'_, Mutex<AppState>>) -> Result<Value, String> {
     let mut state = state.lock().unwrap();
 
@@ -78,7 +92,15 @@ pub fn submit(precision: usize, state: State<'_, Mutex<AppState>>) -> Result<Val
 
     let total = referenced.rows.len();
 
-    write_excel(&referenced, &state.intuit).map_err(|e| e.to_string())?;
+    let mut excel_writer = WorkbookWriter::new();
+    excel_writer
+        .write_prepared(&referenced.rows)
+        .map_err(|e| e.to_string())?;
+    excel_writer
+        .write_unmatched(&state.intuit)
+        .map_err(|e| e.to_string())?;
+
+    excel_writer.save().map_err(|e| e.to_string())?;
 
     let result = ProcessResult {
         expanded: total - state.caterease.len(),
