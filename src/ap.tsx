@@ -1,8 +1,8 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ThemeProvider } from "./components/theme-provider";
-import { HomePage } from "./pages/home";
-import { Page, useSimpleRouter } from "./hooks";
-import { ReviewPage } from "./pages/review";
+import { ThemeProvider } from "./components/theme-provider.tsx";
+import { Page, useSimpleRouter } from "./hooks.ts";
+import { HomePage } from "./pages/home/index.tsx";
+import { ReviewPage } from "./pages/review/index.tsx";
 
 const queryClient = new QueryClient();
 

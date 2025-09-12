@@ -1,17 +1,17 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button.tsx";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
+} from "@/components/ui/dialog.tsx";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { green500, red500 } from "@/constants";
+} from "@/components/ui/tooltip.tsx";
+import { green500, red500 } from "@/constants.ts";
 import { UseMutationResult } from "@tanstack/react-query";
 import {
   CircleAlert,
@@ -19,7 +19,7 @@ import {
   ListChecks,
   WandSparkles,
 } from "lucide-react";
-import { ProcessResult } from "./api";
+import { ProcessResult } from "./api.ts";
 
 type Props = {
   mutation: UseMutationResult<ProcessResult, Error, number, unknown>;

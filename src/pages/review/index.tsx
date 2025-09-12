@@ -1,11 +1,11 @@
-import { Button } from "@/components/ui/button";
-import { PurpleBg } from "@/features/animated-bg/stars";
-import { Page, usePrecision, useSimpleRouter } from "@/hooks";
-import { useGetReview, useReviewMutation } from "./api";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { Check, Undo, X } from "lucide-react";
+import { Button } from "@/components/ui/button.tsx";
+import { PurpleBg } from "@/features/animated-bg/stars.tsx";
+import { Page, usePrecision, useSimpleRouter } from "@/hooks.ts";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { OrderCard } from "./order-card";
+import { Check, Undo, X } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useGetReview, useReviewMutation } from "./api.ts";
+import { OrderCard } from "./order-card.tsx";
 
 export function ReviewPage() {
   const [_page, setPage] = useSimpleRouter();

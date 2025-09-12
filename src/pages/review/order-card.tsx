@@ -1,15 +1,15 @@
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card.tsx";
+import { Denied } from "@/features/denied.tsx";
 import {
   compareDateTimes,
   dateFormatter,
   excelTimeToHHMM,
   timeFormatter,
-} from "@/features/time";
-import { usePrecision } from "@/hooks";
+} from "@/features/time.ts";
+import { usePrecision } from "@/hooks.ts";
 import { AlarmClockCheck, CookingPot, DoorOpen } from "lucide-react";
-import { Denied } from "@/features/denied";
-import { PreparedRow } from "./api";
-import { TimeDisplay } from "./time-display";
+import { PreparedRow } from "./api.ts";
+import { TimeDisplay } from "./time-display.tsx";
 
 type Props = {
   row: PreparedRow;

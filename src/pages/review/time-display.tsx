@@ -1,4 +1,4 @@
-import { Threshold } from "@/features/time";
+import { Threshold } from "@/features/time.ts";
 import { ReactNode } from "react";
 
 type Props = {

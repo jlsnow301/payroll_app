@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button.tsx";
 import {
   Card,
   CardContent,
@@ -6,24 +6,24 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Slider } from "@/components/ui/slider";
+} from "@/components/ui/card.tsx";
+import { Slider } from "@/components/ui/slider.tsx";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { PurpleBg, Stars } from "@/features/animated-bg/stars";
-import { FileDropButton } from "@/features/file-drop/file-drop-button";
-import { Page, usePrecision, useSimpleRouter } from "@/hooks";
+} from "@/components/ui/tooltip.tsx";
+import { PurpleBg, Stars } from "@/features/animated-bg/stars.tsx";
+import { FileDropButton } from "@/features/file-drop/file-drop-button.tsx";
+import { Page, usePrecision, useSimpleRouter } from "@/hooks.ts";
 import { RefreshCcw } from "lucide-react";
 import {
   useCatereaseMutation,
   useIntuitMutation,
   useSubmitMutation,
-} from "./api";
-import { ErrorAlert } from "./error-alert";
-import { ResultSection } from "./result-section";
+} from "./api.ts";
+import { ErrorAlert } from "./error-alert.tsx";
+import { ResultSection } from "./result-section.tsx";
 
 export function HomePage() {
   const [_page, setPage] = useSimpleRouter();
