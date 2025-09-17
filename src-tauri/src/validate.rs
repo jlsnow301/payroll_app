@@ -10,7 +10,7 @@ pub fn validate_headers(worksheet: &Range<Data>, expected_headers: &[&str]) -> R
             .get_string()
             .context("Couldn't read header")?;
 
-        if *header != value {
+        if *header != value.trim().to_lowercase() {
             return Err(anyhow!(
                 "Improper header in file: {} (Expected: {})",
                 value,

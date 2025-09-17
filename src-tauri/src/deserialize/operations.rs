@@ -24,16 +24,16 @@ pub fn deserialize_caterease_excel(file_path: &str) -> Result<Vec<Order>> {
     validate_headers(
         &worksheet,
         &[
-            "Date",
-            "Delivery Person",
-            "Client/Organization",
-            "Description",
-            "Actual",
-            "Grat",
-            "Delivery Category",
-            "Sub-Event #",
-            "Kitchen Ready by",
-            "Subtotal",
+            "date",
+            "delivery person",
+            "client/organization",
+            "description",
+            "actual",
+            "grat",
+            "delivery category",
+            "sub-event #",
+            "kitchen ready by",
+            "subtotal",
         ],
     )?;
 
@@ -82,14 +82,14 @@ pub fn deserialize_intuit_excel(file_path: &str) -> Result<Vec<TimeActivity>> {
     validate_headers(
         &worksheet,
         &[
-            "First name",
-            "Last name",
-            "Username",
-            "Start time",
-            "End time",
-            "Customer",
-            "Hours",
-            "Miles",
+            "first name",
+            "last name",
+            "username",
+            "start time",
+            "end time",
+            "customer",
+            "hours",
+            "miles",
         ],
     )?;
 
