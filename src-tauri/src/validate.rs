@@ -2,7 +2,7 @@ use crate::deserialize::{Order, TimeActivity};
 use anyhow::{anyhow, Context, Result};
 use calamine::{Data, DataType, Range};
 
-pub fn validate_headers(worksheet: &Range<Data>, expected_headers: &[&str]) -> Result<()> {
+pub fn validate_headers(worksheet: &Range<Data>, expected_headers: &[String]) -> Result<()> {
     for (col, header) in expected_headers.iter().enumerate() {
         let value = worksheet
             .get((0, col))
@@ -10,7 +10,7 @@ pub fn validate_headers(worksheet: &Range<Data>, expected_headers: &[&str]) -> R
             .get_string()
             .context("Couldn't read header")?;
 
-        if *header != value.trim().to_lowercase() {
+        if *header.to_lowercase() != value.trim().to_lowercase() {
             return Err(anyhow!(
                 "Improper header in file: '{}' (Expected: '{}')",
                 value,

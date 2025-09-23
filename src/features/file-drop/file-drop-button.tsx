@@ -1,8 +1,3 @@
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip.tsx";
 import { green500 } from "@/constants.ts";
 import { UseMutationResult } from "@tanstack/react-query";
 import { desktopDir } from "@tauri-apps/api/path";
@@ -14,11 +9,10 @@ type FileDropProps = {
   mutation: UseMutationResult<string, Error, string, unknown>;
   reset: () => void;
   title: string;
-  tooltipContent: string;
 };
 
 export function FileDropButton(props: FileDropProps) {
-  const { mutation: ourMut, reset, title, tooltipContent } = props;
+  const { mutation: ourMut, reset, title } = props;
 
   const { ref } = useDropZone({ onDrop: handleDrop });
 
@@ -58,33 +52,26 @@ export function FileDropButton(props: FileDropProps) {
   }
 
   return (
-    <Tooltip delayDuration={500}>
-      <TooltipTrigger asChild>
-        <button
-          type="button"
-          ref={ref}
-          onClick={handleClick}
-          className="
+    <button
+      type="button"
+      ref={ref}
+      onClick={handleClick}
+      className="
       h-36 w-36 select-none bg-background
       relative flex flex-col justify-center items-center
       transition-all 
       border-4 border-dotted hover:border-yellow-400 rounded-lg      
       "
-        >
-          <div className="flex flex-col justify-center items-center text-lg">
-            {icon} {title}
-          </div>
-          <span className="
+    >
+      <div className="flex flex-col justify-center items-center text-lg">
+        {icon} {title}
+      </div>
+      <span className="
             absolute bottom-2 left-2 right-2
             text-muted-foreground text-sm truncate
             ">
-            {ourMut.data}
-          </span>
-        </button>
-      </TooltipTrigger>
-      <TooltipContent>
-        <p>{tooltipContent}</p>
-      </TooltipContent>
-    </Tooltip>
+        {ourMut.data}
+      </span>
+    </button>
   );
 }

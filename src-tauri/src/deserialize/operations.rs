@@ -2,6 +2,7 @@ use anyhow::{anyhow, Context, Result};
 use calamine::{open_workbook, Reader, Xlsx};
 
 use crate::{
+    constants::{CATEREASE_HEADERS, INTUIT_HEADERS},
     deserialize::{
         types::{Order, TimeActivity},
         util::{
@@ -21,21 +22,7 @@ pub fn deserialize_caterease_excel(file_path: &str) -> Result<Vec<Order>> {
         .context("Couldn't find first worksheet")?
         .context("Error reading worksheet data")?;
 
-    validate_headers(
-        &worksheet,
-        &[
-            "date",
-            "delivery person",
-            "client/organization",
-            "description",
-            "actual",
-            "grat",
-            "delivery category",
-            "sub-event #",
-            "kitchen ready by",
-            "subtotal",
-        ],
-    )?;
+    validate_headers(&worksheet, &CATEREASE_HEADERS)?;
 
     // There must be at least one header, one order, and one sum row
     if worksheet.height() < 3 {
@@ -79,19 +66,7 @@ pub fn deserialize_intuit_excel(file_path: &str) -> Result<Vec<TimeActivity>> {
         .worksheet_range("Timesheets")
         .context("Cannot find sheet named 'Timesheets'")?;
 
-    validate_headers(
-        &worksheet,
-        &[
-            "first name",
-            "last name",
-            "username",
-            "start time",
-            "end time",
-            "customer",
-            "hours",
-            "miles",
-        ],
-    )?;
+    validate_headers(&worksheet, &INTUIT_HEADERS)?;
 
     let mut time_sheets: Vec<TimeActivity> = Vec::new();
 

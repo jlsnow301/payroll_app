@@ -7,27 +7,26 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card.tsx";
-import { Slider } from "@/components/ui/slider.tsx";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip.tsx";
 import { PurpleBg, Stars } from "@/features/animated-bg/stars.tsx";
 import { FileDropButton } from "@/features/file-drop/file-drop-button.tsx";
 import { Page, usePrecision, useSimpleRouter } from "@/hooks.ts";
 import { RefreshCcw } from "lucide-react";
 import {
   useCatereaseMutation,
+  useGetHeaders,
   useIntuitMutation,
   useSubmitMutation,
 } from "./api.ts";
 import { ErrorAlert } from "./error-alert.tsx";
 import { ResultSection } from "./result-section.tsx";
+import { PrecisionSlider } from "@/features/precision-slider.tsx";
+import { FileDropDialog } from "@/features/file-drop/file-drop-dialog.tsx";
 
 export function HomePage() {
   const [_page, setPage] = useSimpleRouter();
   const [precision, setPrecision] = usePrecision();
+
+  const expectedHeaders = useGetHeaders();
 
   const catereaseMut = useCatereaseMutation();
   const intuitMut = useIntuitMutation();
@@ -75,43 +74,36 @@ export function HomePage() {
         </CardHeader>
         <CardContent className="flex-1 flex flex-col gap-4 justify-center items-center">
           <div className="flex w-full gap-8 justify-around">
-            <FileDropButton
-              mutation={catereaseMut}
-              reset={handleFileInput}
-              title="Caterease"
-              tooltipContent="Requires an export from caterease- all orders in a given pay period."
-            />
-            <FileDropButton
-              mutation={intuitMut}
-              reset={handleFileInput}
-              title="Intuit"
-              tooltipContent="Requires an export from Intuit. Find this under reports - tracking - mileage."
-            />
-            <div className="flex flex-col gap-2 items-center justify-center">
-              <Tooltip delayDuration={500}>
-                <TooltipTrigger>
-                  <span>
-                    Precision: {precision} hour{precision > 1 && "s"}
-                  </span>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>
-                    Adjusts the leniency while matching order ready times with
-                    clock in times.<br />More leniency may provide more matches,
-                    but at the cost of accuracy.<br />Piggy back orders will
-                    almost certainly be affected.
-                  </p>
-                </TooltipContent>
-              </Tooltip>
-              <Slider
-                className="w-36"
-                value={[precision]}
-                max={5}
-                step={1}
-                min={1}
-                onValueChange={(val) => setPrecision(val[0])}
+            <div className="flex gap-2">
+              <FileDropButton
+                mutation={catereaseMut}
+                reset={handleFileInput}
+                title="Caterease"
+              />
+              <FileDropDialog
+                title="Caterease File Drop"
+                description="Requires an export from Caterease. All orders in a given pay period."
+                headers={expectedHeaders.data?.caterease}
               />
             </div>
+            <div className="flex gap-2">
+              <FileDropButton
+                mutation={intuitMut}
+                reset={handleFileInput}
+                title="Intuit"
+              />
+              <FileDropDialog
+                title="Intuit File Drop"
+                description="Requires an export from Intuit.
+                Find this under reports - tracking - mileage.
+                It must contain a sheet labeled 'Timesheets'"
+                headers={expectedHeaders.data?.intuit}
+              />
+            </div>
+            <PrecisionSlider
+              precision={precision}
+              setPrecision={setPrecision}
+            />
           </div>
           <div className="flex-1 w-3/4">
             {errors.length > 0 && (

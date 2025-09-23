@@ -6,6 +6,7 @@ use tauri_plugin_opener::reveal_item_in_dir;
 
 use crate::{
     compare::PreparedRow,
+    constants::{CATEREASE_HEADERS, INTUIT_HEADERS},
     deserialize::{Order, TimeActivity},
     util::{get_filename, get_orders, get_path, get_references, get_timesheet, OUTPUT_PATH},
     write::WorkbookWriter,
@@ -23,6 +24,20 @@ struct ProcessResult {
     matched: u32,
     skipped: u32,
     total: usize,
+}
+
+#[derive(Serialize)]
+pub struct HeaderResult {
+    caterease: Vec<String>,
+    intuit: Vec<String>,
+}
+
+#[tauri::command]
+pub fn get_headers() -> HeaderResult {
+    HeaderResult {
+        caterease: CATEREASE_HEADERS.clone(),
+        intuit: INTUIT_HEADERS.clone(),
+    }
 }
 
 #[tauri::command]

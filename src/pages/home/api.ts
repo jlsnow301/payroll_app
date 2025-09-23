@@ -1,5 +1,17 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { invoke } from "@tauri-apps/api/core";
+
+type ExpectedHeaders = {
+  caterease: string[];
+  intuit: string[];
+};
+
+export function useGetHeaders() {
+  return useQuery({
+    queryKey: ["headers"],
+    queryFn: () => invoke<ExpectedHeaders>("get_headers"),
+  });
+}
 
 export function useCatereaseMutation() {
   return useMutation({
