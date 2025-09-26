@@ -8,9 +8,6 @@
   "permissions": [
     "core:default",
     "opener:default",
-    "opener:default",
-    "dialog:default",
-    "dialog:default",
     "dialog:default"
   ]
 }
