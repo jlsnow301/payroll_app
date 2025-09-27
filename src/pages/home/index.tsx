@@ -9,6 +9,8 @@ import {
 } from "@/components/ui/card.tsx";
 import { PurpleBg, Stars } from "@/features/animated-bg/stars.tsx";
 import { FileDropButton } from "@/features/file-drop/file-drop-button.tsx";
+import { FileDropDialog } from "@/features/file-drop/file-drop-dialog.tsx";
+import { PrecisionSlider } from "@/features/precision-slider.tsx";
 import { Page, usePrecision, useSimpleRouter } from "@/hooks.ts";
 import { RefreshCcw } from "lucide-react";
 import {
@@ -19,8 +21,6 @@ import {
 } from "./api.ts";
 import { ErrorAlert } from "./error-alert.tsx";
 import { ResultSection } from "./result-section.tsx";
-import { PrecisionSlider } from "@/features/precision-slider.tsx";
-import { FileDropDialog } from "@/features/file-drop/file-drop-dialog.tsx";
 
 export function HomePage() {
   const [_page, setPage] = useSimpleRouter();
@@ -67,9 +67,9 @@ export function HomePage() {
             )}
           </CardTitle>
           <CardDescription className="opacity-100 text-md font-bold">
-            This application takes two input files from caterease (the orders)
-            and intuit (the employee hours). Select or drag the files onto their
-            respective squares to begin.
+            This v0.3.3 application takes two input files from caterease (the
+            orders) and intuit (the employee hours). Select or drag the files
+            onto their respective squares to begin.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex-1 flex flex-col gap-4 justify-center items-center">
