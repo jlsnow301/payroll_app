@@ -67,9 +67,9 @@ export function HomePage() {
             )}
           </CardTitle>
           <CardDescription className="opacity-100 text-md font-bold">
-            This v0.3.3 application takes two input files from caterease (the
-            orders) and intuit (the employee hours). Select or drag the files
-            onto their respective squares to begin.
+            This application takes two input files from caterease (the orders)
+            and intuit (the employee hours). Select or drag the files onto their
+            respective squares to begin.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex-1 flex flex-col gap-4 justify-center items-center">

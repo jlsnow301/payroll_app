@@ -28,14 +28,22 @@ export function App() {
   );
 }
 
+enum UpdateEvent {
+  Started = "Started",
+  Progress = "Progress",
+  Finished = "Finished",
+}
+
 /**
  * Straight from the docs
  * @see https://v2.tauri.app/plugin/updater/#checking-for-updates
  */
 async function checkUpdates() {
+  console.log("Checking for updates");
+
   const update = await check();
   if (!update) {
-    console.log("no update available");
+    console.log("No update available");
     return;
   }
 
@@ -47,17 +55,17 @@ async function checkUpdates() {
 
   await update.downloadAndInstall((event) => {
     switch (event.event) {
-      case "Started":
+      case UpdateEvent.Started:
         contentLength = event.data.contentLength || 0;
         console.log(
           `started downloading ${event.data.contentLength} bytes`,
         );
         break;
-      case "Progress":
+      case UpdateEvent.Progress:
         downloaded += event.data.chunkLength;
         console.log(`downloaded ${downloaded} from ${contentLength}`);
         break;
-      case "Finished":
+      case UpdateEvent.Finished:
         console.log("download finished");
         break;
     }
