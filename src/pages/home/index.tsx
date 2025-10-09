@@ -13,6 +13,7 @@ import { FileDropDialog } from "@/features/file-drop/file-drop-dialog.tsx";
 import { PrecisionSlider } from "@/features/precision-slider.tsx";
 import { Page, usePrecision, useSimpleRouter } from "@/hooks.ts";
 import { RefreshCcw } from "lucide-react";
+import { Suspense } from "react";
 import {
   useCatereaseMutation,
   useGetHeaders,
@@ -73,46 +74,48 @@ export function HomePage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="flex-1 flex flex-col gap-4 justify-center items-center">
-          <div className="flex w-full gap-8 justify-around">
-            <div className="flex gap-2">
-              <FileDropButton
-                mutation={catereaseMut}
-                reset={handleFileInput}
-                title="Caterease"
-              />
-              <FileDropDialog
-                title="Caterease File Drop"
-                description="Requires an export from Caterease. All orders in a given pay period."
-                headers={expectedHeaders.data?.caterease}
-              />
-            </div>
-            <div className="flex gap-2">
-              <FileDropButton
-                mutation={intuitMut}
-                reset={handleFileInput}
-                title="Intuit"
-              />
-              <FileDropDialog
-                title="Intuit File Drop"
-                description="Requires an export from Intuit.
+          <Suspense fallback={<div>Loading...</div>}>
+            <div className="flex w-full gap-8 justify-around">
+              <div className="flex gap-2">
+                <FileDropButton
+                  mutation={catereaseMut}
+                  reset={handleFileInput}
+                  title="Caterease"
+                />
+                <FileDropDialog
+                  title="Caterease File Drop"
+                  description="Requires an export from Caterease. All orders in a given pay period."
+                  headers={expectedHeaders.data.caterease}
+                />
+              </div>
+              <div className="flex gap-2">
+                <FileDropButton
+                  mutation={intuitMut}
+                  reset={handleFileInput}
+                  title="Intuit"
+                />
+                <FileDropDialog
+                  title="Intuit File Drop"
+                  description="Requires an export from Intuit.
                 Find this under reports - tracking - mileage.
                 It must contain a sheet labeled 'Timesheets'"
-                headers={expectedHeaders.data?.intuit}
+                  headers={expectedHeaders.data.intuit}
+                />
+              </div>
+              <PrecisionSlider
+                precision={precision}
+                setPrecision={setPrecision}
               />
             </div>
-            <PrecisionSlider
-              precision={precision}
-              setPrecision={setPrecision}
-            />
-          </div>
-          <div className="flex-1 w-3/4">
-            {errors.length > 0 && (
-              <ErrorAlert
-                errors={errors}
-                reset={reset}
-              />
-            )}
-          </div>
+            <div className="flex-1 w-3/4">
+              {errors.length > 0 && (
+                <ErrorAlert
+                  errors={errors}
+                  reset={reset}
+                />
+              )}
+            </div>
+          </Suspense>
         </CardContent>
         <CardFooter>
           <ResultSection

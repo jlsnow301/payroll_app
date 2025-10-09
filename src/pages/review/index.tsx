@@ -40,7 +40,7 @@ export function ReviewPage() {
     setMatches(withId);
   }, [withId]);
 
-  function handleClick(id: number) {
+  function handleClick(id: number): void {
     const entry = matches[id];
 
     if (entry.approved) {
@@ -50,7 +50,7 @@ export function ReviewPage() {
     }
   }
 
-  function handleReject(id: number) {
+  function handleReject(id: number): void {
     const newOrders = [...matches];
 
     const entry = {
@@ -67,7 +67,7 @@ export function ReviewPage() {
     setMatches(newOrders);
   }
 
-  function handleReset(id: number) {
+  function handleReset(id: number): void {
     const newOrders = [...matches];
 
     newOrders[id] = {

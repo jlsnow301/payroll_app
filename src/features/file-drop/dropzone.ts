@@ -19,6 +19,7 @@ export function useDropZone(props: Props) {
   const { onDrop } = props;
   const ref = useRef<HTMLButtonElement>(null);
 
+  /** Takes the tauri drag drop event & detects if it was within the ref zone */
   useEffect(() => {
     const unlisten = listen<TauriDragDropEvent>(
       "tauri://drag-drop",

@@ -28,8 +28,10 @@ export enum Threshold {
   Gray, //Default
 }
 
-/** Excel dates are sent without date information so this sets it to a Date obj
-that is from the second argument */
+/**
+ * Excel dates are sent without date information so this sets it to a Date obj
+ * that is from the second argument
+ */
 function getExcelDate(excelDt: number, setTo: Date): Date {
   const timeFraction = excelDt % 1;
   const totalMinutes = timeFraction * 24 * 60;

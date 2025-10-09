@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { invoke } from "@tauri-apps/api/core";
 
 type ExpectedHeaders = {
@@ -7,7 +7,7 @@ type ExpectedHeaders = {
 };
 
 export function useGetHeaders() {
-  return useQuery({
+  return useSuspenseQuery({
     queryKey: ["headers"],
     queryFn: () => invoke<ExpectedHeaders>("get_headers"),
   });

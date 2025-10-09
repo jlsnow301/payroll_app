@@ -42,22 +42,12 @@ export function Stars() {
     <>
       {/* Animated Stars */}
       <div
-        className="absolute inset-0 animate-pulse"
+        className="absolute inset-0"
         style={{
           animation: "pulse 2s ease-in-out infinite, drift 20s linear infinite",
           animationName: "pulse, drift",
         }}
       >
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `
-            @keyframes drift {
-              from { transform: translate(0, 0); }
-              to { transform: translate(100px, -100px); }
-            }
-          `,
-          }}
-        />
         {stars.map((star) => (
           <div
             key={star.id}
@@ -82,12 +72,7 @@ export function Stars() {
       </div>
 
       {/* Floating particles */}
-      <div
-        className="absolute inset-0"
-        style={{
-          animation: "drift 20s linear infinite",
-        }}
-      >
+      <div className="absolute inset-0 animate-drift">
         {Array.from({ length: 30 }).map((_, i) => (
           <div
             key={`particle-${i}`}
@@ -104,24 +89,18 @@ export function Stars() {
 
       {/* Retro grid overlay */}
       <div
-        className="absolute inset-0 opacity-10"
+        className="absolute inset-0 opacity-10 animate-drift"
         style={{
           backgroundImage: `
             linear-gradient(rgba(196, 181, 253, 0.3) 1px, transparent 1px),
             linear-gradient(90deg, rgba(196, 181, 253, 0.3) 1px, transparent 1px)
           `,
           backgroundSize: "50px 50px",
-          animation: "drift 20s linear infinite",
         }}
       />
 
       {/* Animated glow effects */}
-      <div
-        className="absolute inset-0"
-        style={{
-          animation: "drift 20s linear infinite",
-        }}
-      >
+      <div className="absolute inset-0 animate-drift">
         {Array.from({ length: 8 }).map((_, i) => (
           <div
             key={`glow-${i}`}

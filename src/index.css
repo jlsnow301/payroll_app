@@ -128,6 +128,19 @@
   }
 }
 
+@keyframes drift {
+  from {
+    transform: translate(0, 0);
+  }
+  to {
+    transform: translate(100px, -100px);
+  }
+}
+
 @utility animate-vanishing {
   animation: vanishing 3s ease-in-out forwards;
+}
+
+@utility animate-drift {
+  animation: drift 20s linear infinite;
 }
