@@ -1,4 +1,4 @@
-import { PropsWithChildren, useMemo } from "react";
+import { PropsWithChildren } from "react";
 
 type Star = {
   id: number;
@@ -36,7 +36,7 @@ export function PurpleBg(props: PropsWithChildren) {
 }
 
 export function Stars() {
-  const stars = useMemo(() => generateStars(150), []);
+  const stars = generateStars(150);
 
   return (
     <>

@@ -7,6 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card.tsx";
+import { AboutDialog } from "@/features/about.tsx";
 import { PurpleBg, Stars } from "@/features/animated-bg/stars.tsx";
 import { FileDropButton } from "@/features/file-drop/file-drop-button.tsx";
 import { FileDropDialog } from "@/features/file-drop/file-drop-dialog.tsx";
@@ -60,7 +61,7 @@ export function HomePage() {
       <Card className="w-7/8 h-7/8 z-10 opacity-90 select-none">
         <CardHeader>
           <CardTitle className="text-xl flex justify-between h-8">
-            <span>🗃 Payroll App</span>
+            <AboutDialog />
             {!submitMut.isIdle && (
               <Button onClick={reset} size="sm" variant="ghost">
                 <RefreshCcw /> Reset

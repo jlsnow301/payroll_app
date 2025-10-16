@@ -3,7 +3,7 @@ import { PurpleBg } from "@/features/animated-bg/stars.tsx";
 import { Page, usePrecision, useSimpleRouter } from "@/hooks.ts";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { Undo } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { PreparedRow, useGetReview, useReviewMutation } from "./api.ts";
 import { OrderCard } from "./order-card.tsx";
 
@@ -33,7 +33,7 @@ export function ReviewPage() {
   const { data } = useGetReview(precision);
   const reviewMut = useReviewMutation();
 
-  const withId = useMemo(() => addInitialValues(data?.rows), [data?.rows]);
+  const withId = addInitialValues(data?.rows);
   const [matches, setMatches] = useState(() => withId);
 
   useEffect(() => {
