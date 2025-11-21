@@ -1,3 +1,5 @@
+use std::{env, path::PathBuf};
+
 use crate::{
     compare::PreparedRow,
     deserialize::TimeActivity,
@@ -167,8 +169,12 @@ impl WorkbookWriter {
     }
 
     pub fn save(&mut self) -> Result<(), anyhow::Error> {
+        let mut path = PathBuf::from(env::var("USERPROFILE").unwrap());
+        path.push("Documents");
+        path.push(OUTPUT_PATH);
+        
         self.workbook
-            .save(OUTPUT_PATH)
+            .save(&path)
             .context("Couldn't save workbook")
     }
 }
