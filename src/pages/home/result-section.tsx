@@ -1,35 +1,30 @@
-import { Button } from "@/components/ui/button.tsx";
+import { UseMutationResult } from "@tanstack/react-query";
+import { CircleAlert, CircleCheck, WandSparkles } from "lucide-react";
+import { Button } from "../../components/ui/button.tsx";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog.tsx";
+} from "../../components/ui/dialog.tsx";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@/components/ui/tooltip.tsx";
-import { green500, red500 } from "@/constants.ts";
-import { UseMutationResult } from "@tanstack/react-query";
-import {
-  CircleAlert,
-  CircleCheck,
-  ListChecks,
-  WandSparkles,
-} from "lucide-react";
+} from "../../components/ui/tooltip.tsx";
+import { green500, red500 } from "../../constants.ts";
 import { ProcessResult } from "./api.ts";
 
 type Props = {
   mutation: UseMutationResult<ProcessResult, Error, number, unknown>;
   ready: boolean;
-  onReview: () => void;
+
   onSubmit: () => void;
 };
 
 export function ResultSection(props: Props) {
-  const { mutation, ready, onReview, onSubmit } = props;
+  const { mutation, ready, onSubmit } = props;
 
   let submitIcon = <WandSparkles />;
   if (mutation.isSuccess) {
@@ -44,23 +39,6 @@ export function ResultSection(props: Props) {
         {mutation.isSuccess && <ViewStats {...mutation.data} />}
       </div>
       <div className="flex gap-2 items-center">
-        <Tooltip delayDuration={500}>
-          <TooltipTrigger asChild>
-            <Button
-              disabled={!ready}
-              onClick={onReview}
-              className="w-36"
-              size="lg"
-            >
-              <ListChecks /> Manual
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>
-            {ready
-              ? "Manually approve time suggestions"
-              : "Both files must be uploaded and valid"}
-          </TooltipContent>
-        </Tooltip>
         <Tooltip delayDuration={500}>
           <TooltipTrigger asChild>
             <Button

@@ -1,9 +1,8 @@
-use std::{env, path::PathBuf};
+use std::{path::PathBuf};
 
 use crate::{
     compare::PreparedRow,
     deserialize::TimeActivity,
-    util::OUTPUT_PATH,
     write::util::{write_header_row, write_order_date, write_order_timestamp},
 };
 use anyhow::{Context, Error, Result};
@@ -168,11 +167,7 @@ impl WorkbookWriter {
         Ok(())
     }
 
-    pub fn save(&mut self) -> Result<(), anyhow::Error> {
-        let mut path = PathBuf::from(env::var("USERPROFILE").unwrap());
-        path.push("Documents");
-        path.push(OUTPUT_PATH);
-        
+    pub fn save(&mut self, path: PathBuf) -> Result<(), anyhow::Error> {        
         self.workbook
             .save(&path)
             .context("Couldn't save workbook")

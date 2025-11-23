@@ -12,8 +12,6 @@ use std::{
     sync::MutexGuard,
 };
 
-pub const OUTPUT_PATH: &str = "formatted_payroll.xlsx";
-
 pub fn get_filename(path: &Path) -> String {
     path.file_name()
         .unwrap()

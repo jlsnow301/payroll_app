@@ -1,4 +1,6 @@
-import { Button } from "@/components/ui/button.tsx";
+import { RefreshCcw } from "lucide-react";
+import { Suspense } from "react";
+import { Button } from "../../components/ui/button.tsx";
 import {
   Card,
   CardContent,
@@ -6,15 +8,13 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card.tsx";
-import { AboutDialog } from "@/features/about.tsx";
-import { PurpleBg, Stars } from "@/features/animated-bg/stars.tsx";
-import { FileDropButton } from "@/features/file-drop/file-drop-button.tsx";
-import { FileDropDialog } from "@/features/file-drop/file-drop-dialog.tsx";
-import { PrecisionSlider } from "@/features/precision-slider.tsx";
-import { Page, usePrecision, useSimpleRouter } from "@/hooks.ts";
-import { RefreshCcw } from "lucide-react";
-import { Suspense } from "react";
+} from "../../components/ui/card.tsx";
+import { AboutDialog } from "../../features/about.tsx";
+import { PurpleBg, Stars } from "../../features/animated-bg/stars.tsx";
+import { FileDropButton } from "../../features/file-drop/file-drop-button.tsx";
+import { FileDropDialog } from "../../features/file-drop/file-drop-dialog.tsx";
+import { PrecisionSlider } from "../../features/precision-slider.tsx";
+import { usePrecision, useSimpleRouter } from "../../hooks.ts";
 import {
   useCatereaseMutation,
   useGetHeaders,
@@ -25,7 +25,7 @@ import { ErrorAlert } from "./error-alert.tsx";
 import { ResultSection } from "./result-section.tsx";
 
 export function HomePage() {
-  const [_page, setPage] = useSimpleRouter();
+  const [_page, _setPage] = useSimpleRouter();
   const [precision, setPrecision] = usePrecision();
 
   const expectedHeaders = useGetHeaders();
@@ -122,7 +122,6 @@ export function HomePage() {
           <ResultSection
             mutation={submitMut}
             onSubmit={() => submitMut.mutate(precision)}
-            onReview={() => setPage(Page.Review)}
             ready={ready}
           />
         </CardFooter>

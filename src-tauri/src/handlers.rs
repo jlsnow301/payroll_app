@@ -1,14 +1,13 @@
 use serde::Serialize;
 use serde_json::{json, Value};
-use std::sync::Mutex;
+use std::{env, path::{PathBuf}, sync::Mutex};
 use tauri::State;
 use tauri_plugin_opener::reveal_item_in_dir;
 
 use crate::{
-    compare::PreparedRow,
     constants::{CATEREASE_HEADERS, INTUIT_HEADERS},
     deserialize::{Order, TimeActivity},
-    util::{get_filename, get_orders, get_path, get_references, get_timesheet, OUTPUT_PATH},
+    util::{get_filename, get_orders, get_path, get_references, get_timesheet},
     write::WorkbookWriter,
 };
 
@@ -77,29 +76,6 @@ pub fn intuit_input(
 }
 
 #[tauri::command]
-pub fn manual_review(precision: usize, state: State<'_, Mutex<AppState>>) -> Result<Value, String> {
-    let mut state = state.lock().unwrap();
-
-    let referenced = get_references(precision as i64, &mut state).map_err(|e| e.to_string())?;
-
-    Ok(json!(referenced))
-}
-
-#[tauri::command]
-pub fn manual_input(rows: Vec<PreparedRow>) -> Result<String, String> {
-    let mut excel_writer = WorkbookWriter::new();
-    excel_writer
-        .write_prepared(&rows)
-        .map_err(|e| e.to_string())?;
-
-    excel_writer.save().map_err(|e| e.to_string())?;
-
-    reveal_item_in_dir(OUTPUT_PATH).unwrap();
-
-    Ok("Success".to_string())
-}
-
-#[tauri::command]
 pub fn submit(precision: usize, state: State<'_, Mutex<AppState>>) -> Result<Value, String> {
     let mut state = state.lock().unwrap();
 
@@ -115,7 +91,12 @@ pub fn submit(precision: usize, state: State<'_, Mutex<AppState>>) -> Result<Val
         .write_unmatched(&state.intuit)
         .map_err(|e| e.to_string())?;
 
-    excel_writer.save().map_err(|e| e.to_string())?;
+    let mut path = PathBuf::from(env::var("USERPROFILE").unwrap());
+    path.push("Documents");
+    path.push("formatted_payroll.xlsx");
+
+
+    excel_writer.save(path.clone()).map_err(|e| e.to_string())?;
 
     let result = ProcessResult {
         expanded: total - state.caterease.len(),
@@ -124,7 +105,7 @@ pub fn submit(precision: usize, state: State<'_, Mutex<AppState>>) -> Result<Val
         total,
     };
 
-    reveal_item_in_dir(OUTPUT_PATH).unwrap();
+    reveal_item_in_dir(path).unwrap();
 
     Ok(json!(result))
 }

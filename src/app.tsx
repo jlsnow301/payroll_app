@@ -5,7 +5,6 @@ import { useEffect } from "react";
 import { ThemeProvider } from "./components/theme-provider.tsx";
 import { Page, useSimpleRouter } from "./hooks.ts";
 import { HomePage } from "./pages/home/index.tsx";
-import { ReviewPage } from "./pages/review/index.tsx";
 
 const queryClient = new QueryClient();
 
@@ -21,7 +20,6 @@ export function App() {
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <main className="h-screen w-screen text-foreground flex">
           {page === Page.Home && <HomePage />}
-          {page === Page.Review && <ReviewPage />}
         </main>
       </ThemeProvider>
     </QueryClientProvider>
