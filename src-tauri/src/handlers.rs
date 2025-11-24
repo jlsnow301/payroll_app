@@ -7,7 +7,8 @@ use tauri_plugin_opener::reveal_item_in_dir;
 use crate::{
     constants::{CATEREASE_HEADERS, INTUIT_HEADERS},
     deserialize::{Order, TimeActivity},
-    util::{get_driver_stats, get_filename, get_orders, get_path, get_references, get_timesheet},
+    stats::get_driver_stats,
+    util::{get_filename, get_orders, get_path, get_references, get_timesheet},
     write::WorkbookWriter,
 };
 
@@ -16,6 +17,8 @@ pub struct AppState {
     pub caterease: Vec<Order>,
     pub intuit: Vec<TimeActivity>,
 }
+
+use crate::stats::DriverStats;
 
 #[derive(Serialize)]
 struct ProcessResult {
@@ -27,14 +30,9 @@ struct ProcessResult {
     skipped: u32,
     /// Total processed rows
     total: usize,
-    /// Driver with most assignments
-    top_used: String,
-    /// The count
-    top_used_count: u32,
-    /// Most punctual driver by average time difference of clock in to ready time
-    punctual: String,
-    /// The diff
-    punctual_avg: f64,
+    /// Driver statistics (flattened)
+    #[serde(flatten)]
+    stats: DriverStats,
 }
 
 #[derive(Serialize)]
@@ -115,11 +113,8 @@ pub fn submit(precision: usize, state: State<'_, Mutex<AppState>>) -> Result<Val
         expanded: total - state.caterease.len(),
         matched: referenced.matched,
         skipped: referenced.skipped,
-        top_used: stats.top_used,
-        top_used_count: stats.top_used_count,
-        punctual: stats.punctual,
-        punctual_avg: stats.punctual_avg,
         total,
+        stats,
     };
 
     reveal_item_in_dir(path).unwrap();
