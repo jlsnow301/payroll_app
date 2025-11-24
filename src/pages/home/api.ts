@@ -32,6 +32,10 @@ export type ProcessResult = {
   matched: number;
   skipped: number;
   total: number;
+  top_used: string;
+  top_used_count: number;
+  punctual: string;
+  punctual_avg: number;
 };
 
 export function useSubmitMutation() {

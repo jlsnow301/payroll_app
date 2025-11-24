@@ -16,6 +16,8 @@ pub struct PreparedRow {
 #[derive(Debug, Serialize)]
 pub struct ReferenceResult {
     pub rows: Vec<PreparedRow>,
+    /// Number of matched entries   
     pub matched: u32,
+    /// Invalid orders etc
     pub skipped: u32,
 }

@@ -1,5 +1,5 @@
 import { RefreshCcw } from "lucide-react";
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import { Button } from "../../components/ui/button.tsx";
 import {
   Card,
@@ -14,7 +14,12 @@ import { PurpleBg, Stars } from "../../features/animated-bg/stars.tsx";
 import { FileDropButton } from "../../features/file-drop/file-drop-button.tsx";
 import { FileDropDialog } from "../../features/file-drop/file-drop-dialog.tsx";
 import { PrecisionSlider } from "../../features/precision-slider.tsx";
-import { usePrecision, useSimpleRouter } from "../../hooks.ts";
+import {
+  Page,
+  usePrecision,
+  useSimpleRouter,
+  useSubmissionResult,
+} from "../../hooks.ts";
 import {
   useCatereaseMutation,
   useGetHeaders,
@@ -25,8 +30,9 @@ import { ErrorAlert } from "./error-alert.tsx";
 import { ResultSection } from "./result-section.tsx";
 
 export function HomePage() {
-  const [_page, _setPage] = useSimpleRouter();
+  const [_page, setPage] = useSimpleRouter();
   const [precision, setPrecision] = usePrecision();
+  const [_results, setResults] = useSubmissionResult();
 
   const expectedHeaders = useGetHeaders();
 
@@ -49,6 +55,13 @@ export function HomePage() {
     intuitMut.reset();
     submitMut.reset();
   }
+
+  useEffect(() => {
+    if (submitMut.isSuccess) {
+      setResults(submitMut.data);
+      setPage(Page.Review);
+    }
+  }, [submitMut.isSuccess]);
 
   const errors: string[] = [];
   if (catereaseMut.isError) errors.push(`Caterease- ${catereaseMut.error}`);

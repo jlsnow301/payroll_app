@@ -1,4 +1,4 @@
-use std::{path::PathBuf};
+use std::path::PathBuf;
 
 use crate::{
     compare::PreparedRow,
@@ -167,9 +167,7 @@ impl WorkbookWriter {
         Ok(())
     }
 
-    pub fn save(&mut self, path: PathBuf) -> Result<(), anyhow::Error> {        
-        self.workbook
-            .save(&path)
-            .context("Couldn't save workbook")
+    pub fn save(&mut self, path: &PathBuf) -> Result<(), anyhow::Error> {
+        self.workbook.save(&path).context("Couldn't save workbook")
     }
 }

@@ -4,6 +4,7 @@ import { Button } from "../../components/ui/button.tsx";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -78,6 +79,7 @@ function ViewStats(props: ProcessResult) {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Processing Results</DialogTitle>
+          <DialogDescription>The program ran successfully</DialogDescription>
         </DialogHeader>
         Overall, the application wrote {total} orders with {matched}{" "}
         timesheet matches. Given the sensitivity, it had{" "}

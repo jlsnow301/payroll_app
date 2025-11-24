@@ -1,13 +1,13 @@
 use serde::Serialize;
 use serde_json::{json, Value};
-use std::{env, path::{PathBuf}, sync::Mutex};
+use std::{env, path::PathBuf, sync::Mutex};
 use tauri::State;
 use tauri_plugin_opener::reveal_item_in_dir;
 
 use crate::{
     constants::{CATEREASE_HEADERS, INTUIT_HEADERS},
     deserialize::{Order, TimeActivity},
-    util::{get_filename, get_orders, get_path, get_references, get_timesheet},
+    util::{get_driver_stats, get_filename, get_orders, get_path, get_references, get_timesheet},
     write::WorkbookWriter,
 };
 
@@ -19,10 +19,22 @@ pub struct AppState {
 
 #[derive(Serialize)]
 struct ProcessResult {
+    /// Orders with multiple drivers
     expanded: usize,
+    /// Total matched times to orders
     matched: u32,
+    /// Invalid orders
     skipped: u32,
+    /// Total processed rows
     total: usize,
+    /// Driver with most assignments
+    top_used: String,
+    /// The count
+    top_used_count: u32,
+    /// Most punctual driver by average time difference of clock in to ready time
+    punctual: String,
+    /// The diff
+    punctual_avg: f64,
 }
 
 #[derive(Serialize)]
@@ -95,13 +107,18 @@ pub fn submit(precision: usize, state: State<'_, Mutex<AppState>>) -> Result<Val
     path.push("Documents");
     path.push("formatted_payroll.xlsx");
 
+    excel_writer.save(&path).map_err(|e| e.to_string())?;
 
-    excel_writer.save(path.clone()).map_err(|e| e.to_string())?;
+    let stats = get_driver_stats(&referenced.rows);
 
     let result = ProcessResult {
         expanded: total - state.caterease.len(),
         matched: referenced.matched,
         skipped: referenced.skipped,
+        top_used: stats.top_used,
+        top_used_count: stats.top_used_count,
+        punctual: stats.punctual,
+        punctual_avg: stats.punctual_avg,
         total,
     };
 
