@@ -4,11 +4,9 @@ import {
   CardHeader,
   CardTitle,
 } from "../../components/ui/card.tsx";
-import { STATS_DATA } from "../../pages/review/data.ts";
+import type { StatCard } from "../../pages/review/data.ts";
 import { glowColors, positionClasses, rarityColors } from "./constants.ts";
 import { Rarity } from "./types.ts";
-
-type StatCard = (typeof STATS_DATA)[number];
 
 type CardGlowProps = {
   rarity: Rarity;

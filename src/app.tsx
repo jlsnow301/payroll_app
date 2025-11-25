@@ -20,8 +20,8 @@ export function App() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <main className="h-screen w-screen text-foreground flex">
-          {page !== Page.Home && <HomePage />}
-          {page !== Page.Review && <ReviewPage />}
+          {page === Page.Home && <HomePage />}
+          {page === Page.Review && <ReviewPage />}
         </main>
       </ThemeProvider>
     </QueryClientProvider>

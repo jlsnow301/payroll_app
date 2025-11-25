@@ -14,12 +14,8 @@ import { PurpleBg, Stars } from "../../features/animated-bg/stars.tsx";
 import { FileDropButton } from "../../features/file-drop/file-drop-button.tsx";
 import { FileDropDialog } from "../../features/file-drop/file-drop-dialog.tsx";
 import { PrecisionSlider } from "../../features/precision-slider.tsx";
-import {
-  Page,
-  usePrecision,
-  useSimpleRouter,
-  useSubmissionResult,
-} from "../../hooks.ts";
+import { Page, usePrecision, useSimpleRouter } from "../../hooks.ts";
+import { generateStatsData, useStatsData } from "../review/data.ts";
 import {
   useCatereaseMutation,
   useGetHeaders,
@@ -32,7 +28,7 @@ import { ResultSection } from "./result-section.tsx";
 export function HomePage() {
   const [_page, setPage] = useSimpleRouter();
   const [precision, setPrecision] = usePrecision();
-  const [_results, setResults] = useSubmissionResult();
+  const [, setStatsData] = useStatsData();
 
   const expectedHeaders = useGetHeaders();
 
@@ -58,8 +54,7 @@ export function HomePage() {
 
   useEffect(() => {
     if (submitMut.isSuccess) {
-      console.log(submitMut.data);
-      setResults(submitMut.data);
+      setStatsData(generateStatsData(submitMut.data));
       setPage(Page.Review);
     }
   }, [submitMut.isSuccess]);

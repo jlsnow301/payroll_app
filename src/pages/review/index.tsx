@@ -3,26 +3,27 @@ import { useMemo, useState } from "react";
 import { Button } from "../../components/ui/button.tsx";
 import { PurpleBg, Stars } from "../../features/animated-bg/stars.tsx";
 import { LootCard } from "../../features/loot-card/index.tsx";
+import { StatsCard } from "../../features/loot-card/stats-card.tsx";
 
 import { getStack } from "../../features/loot-card/weighted-random.ts";
-import { Page, useSimpleRouter, useSubmissionResult } from "../../hooks.ts";
-import { STATS_DATA } from "./data.ts";
+import { Page, useSimpleRouter } from "../../hooks.ts";
+import { useStatsData } from "./data.ts";
 
 export function ReviewPage() {
-  const [_submissionResult, setSubmissionResult] = useSubmissionResult();
+  const [statsData, setStatsData] = useStatsData();
   const [_page, setPage] = useSimpleRouter();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [touchStart, setTouchStart] = useState<number | null>(null);
 
-  const stack = useMemo(getStack, []);
+  const stack = useMemo(() => getStack(statsData.length), [statsData.length]);
 
   function handleNext(): void {
-    setCurrentIndex((prev) => (prev + 1) % STATS_DATA.length);
+    setCurrentIndex((prev) => (prev + 1) % statsData.length);
   }
 
   function handlePrev(): void {
     setCurrentIndex(
-      (prev) => (prev - 1 + STATS_DATA.length) % STATS_DATA.length,
+      (prev) => (prev - 1 + statsData.length) % statsData.length,
     );
   }
 
@@ -48,22 +49,37 @@ export function ReviewPage() {
   }
 
   function handleReset(): void {
-    setSubmissionResult(undefined);
+    setStatsData([]);
     setPage(Page.Home);
   }
 
   function getDirection(index: number): "left" | "right" | "center" | null {
     if (index === currentIndex) return "center";
 
-    const prevIndex = (currentIndex - 1 + STATS_DATA.length) %
-      STATS_DATA.length;
-    const nextIndex = (currentIndex + 1) % STATS_DATA.length;
+    const prevIndex = (currentIndex - 1 + statsData.length) %
+      statsData.length;
+    const nextIndex = (currentIndex + 1) % statsData.length;
 
     if (index === prevIndex) return "left";
     if (index === nextIndex) return "right";
 
     // Hide all other cards
     return null;
+  }
+
+  if (!statsData || statsData.length === 0) {
+    return (
+      <PurpleBg>
+        <Stars />
+        <div className="relative z-10 flex flex-col items-center justify-center w-full h-full">
+          <p className="text-white/70">No data available</p>
+          <Button variant="secondary" onClick={handleReset} className="mt-4">
+            <RotateCcw className="size-4 mr-2" />
+            Go Back
+          </Button>
+        </div>
+      </PurpleBg>
+    );
   }
 
   return (
@@ -104,9 +120,22 @@ export function ReviewPage() {
 
         {/* Cards container */}
         <div className="relative w-72 h-96 animate-in fade-in zoom-in-50 duration-700 delay-300 fill-mode-backwards">
-          {STATS_DATA.map((stat, index) => {
+          {statsData.map((stat, index) => {
             const direction = getDirection(index);
             if (direction === null) return;
+
+            // First card is always the general stats card
+            if (stat.id === 1) {
+              return (
+                <StatsCard
+                  key={stat.id}
+                  stat={stat}
+                  isActive={index === currentIndex}
+                  direction={direction}
+                />
+              );
+            }
+
             return (
               <LootCard
                 key={stat.id}
@@ -121,7 +150,7 @@ export function ReviewPage() {
 
         {/* Navigation dots */}
         <div className="flex gap-3 mt-8 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-500 fill-mode-backwards">
-          {STATS_DATA.map((_, index) => (
+          {statsData.map((_, index) => (
             <button
               type="button"
               key={index}

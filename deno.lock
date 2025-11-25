@@ -20,7 +20,6 @@
     "npm:babel-plugin-react-compiler@1": "1.0.0",
     "npm:class-variance-authority@~0.7.1": "0.7.1",
     "npm:clsx@^2.1.1": "2.1.1",
-    "npm:es-toolkit@^1.42.0": "1.42.0",
     "npm:jotai@^2.15.0": "2.15.0_@types+react@19.2.2_react@19.2.0",
     "npm:lucide-react@0.545": "0.545.0_react@19.2.0",
     "npm:react-dom@^19.2.0": "19.2.0_react@19.2.0",
@@ -1202,9 +1201,6 @@
         "tapable"
       ]
     },
-    "es-toolkit@1.42.0": {
-      "integrity": "sha512-SLHIyY7VfDJBM8clz4+T2oquwTQxEzu263AyhVK4jREOAwJ+8eebaa4wM3nlvnAqhDrMm2EsA6hWHaQsMPQ1nA=="
-    },
     "esbuild@0.25.11": {
       "integrity": "sha512-KohQwyzrKTQmhXDW1PjCv3Tyspn9n5GcY2RTDqeORIdIJY8yKIF7sTSopFmn/wpMPW4rdPXI0UE5LJLuq3bx0Q==",
       "optionalDependencies": [
@@ -1622,7 +1618,6 @@
         "npm:babel-plugin-react-compiler@1",
         "npm:class-variance-authority@~0.7.1",
         "npm:clsx@^2.1.1",
-        "npm:es-toolkit@^1.42.0",
         "npm:jotai@^2.15.0",
         "npm:lucide-react@0.545",
         "npm:react-dom@^19.2.0",

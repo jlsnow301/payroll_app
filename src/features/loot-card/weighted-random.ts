@@ -32,10 +32,10 @@ const rarities: WeightedItem[] = [
   { item: "common", weight: 7 },
 ];
 
-export function getStack(): Rarity[] {
+export function getStack(length: number = 5): Rarity[] {
   const stack: Rarity[] = ["common"];
 
-  for (let i = 0; i < 4; i++) {
+  for (let i = 1; i < length; i++) {
     const sampledRarity = weightedRandomPick(rarities) as Rarity;
     stack.push(sampledRarity);
   }
