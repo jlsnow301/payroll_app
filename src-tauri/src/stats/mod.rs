@@ -1,3 +1,5 @@
+mod late_percent;
+mod latest_time;
 mod most_late;
 mod most_used;
 mod operations;

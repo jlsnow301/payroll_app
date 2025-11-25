@@ -1,6 +1,8 @@
 use crate::{
     compare::PreparedRow,
     stats::{
+        late_percent::find_highest_late_percent_driver,
+        latest_time::find_latest_clock_in_driver,
         most_late::find_most_late_driver,
         most_used::find_most_used_driver,
         punctual::find_most_punctual_driver,
@@ -81,82 +83,4 @@ fn build_driver_accumulator(rows: &[PreparedRow]) -> HashMap<String, DriverAccum
         );
     }
     acc
-}
-
-/// Find the driver(s) with the highest late percentage (up to 3-way tie)
-fn find_highest_late_percent_driver(acc: &HashMap<String, DriverAccumulator>) -> (String, f64) {
-    // First pass: find the maximum percentage
-    let mut max_percent: f64 = 0.0;
-    for (_, v) in acc.iter() {
-        if v.count == 0 {
-            continue;
-        }
-        let percent = (v.late_count as f64 / v.count as f64) * 100.0;
-        if percent > max_percent {
-            max_percent = percent;
-        }
-    }
-    if max_percent == 0.0 {
-        println!("\n=== Highest Late Percent Driver ===");
-        println!("  No data available");
-        return (String::new(), 0.0);
-    }
-    // Second pass: collect all drivers with that percentage (up to 3)
-    let mut winners: Vec<&String> = acc
-        .iter()
-        .filter(|(_, v)| {
-            if v.count == 0 {
-                return false;
-            }
-            let percent = (v.late_count as f64 / v.count as f64) * 100.0;
-            (percent - max_percent).abs() < 0.0001 // float equality check
-        })
-        .map(|(driver, _)| driver)
-        .collect();
-    winners.sort();
-    winners.truncate(3);
-    let result = (
-        winners
-            .iter()
-            .map(|s| s.as_str())
-            .collect::<Vec<_>>()
-            .join(", "),
-        max_percent,
-    );
-    println!("\n=== Highest Late Percent Driver ===");
-    println!("  Winner: {} at {:.2}% late", result.0, result.1);
-    result
-}
-
-/// Find the driver(s) with the single latest clock-in (up to 3-way tie)
-fn find_latest_clock_in_driver(acc: &HashMap<String, DriverAccumulator>) -> (String, f64) {
-    let max_late_diff = acc
-        .iter()
-        .map(|(_, v)| v.max_late_diff_seconds)
-        .max()
-        .unwrap_or(0);
-    if max_late_diff == 0 {
-        println!("\n=== Latest Single Clock-In ===");
-        println!("  No late clock-ins recorded");
-        return (String::new(), 0.0);
-    }
-    let mut winners: Vec<&String> = acc
-        .iter()
-        .filter(|(_, v)| v.max_late_diff_seconds == max_late_diff)
-        .map(|(driver, _)| driver)
-        .collect();
-    winners.sort();
-    winners.truncate(3);
-    let minutes = max_late_diff as f64 / 60.0;
-    let result = (
-        winners
-            .iter()
-            .map(|s| s.as_str())
-            .collect::<Vec<_>>()
-            .join(", "),
-        minutes,
-    );
-    println!("\n=== Latest Single Clock-In ===");
-    println!("  Winner: {} at {:.2} minutes late", result.0, result.1);
-    result
 }
