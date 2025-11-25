@@ -1,4 +1,3 @@
-import { useEffect, useMemo, useState } from "react";
 import {
   Card,
   CardContent,
@@ -7,15 +6,9 @@ import {
 } from "../../components/ui/card.tsx";
 import { STATS_DATA } from "../../pages/review/data.ts";
 import { glowColors, positionClasses, rarityColors } from "./constants.ts";
+import { Rarity } from "./types.ts";
 
 type StatCard = (typeof STATS_DATA)[number];
-type Rarity = "legendary" | "epic" | "rare" | "common";
-
-const COLORED_RARITIES: Rarity[] = ["legendary", "epic", "rare"];
-
-function getRandomRarity(): Rarity {
-  return COLORED_RARITIES[Math.floor(Math.random() * COLORED_RARITIES.length)];
-}
 
 type CardGlowProps = {
   rarity: Rarity;
@@ -33,31 +26,31 @@ function CardGlow(props: CardGlowProps) {
     >
       {/* Outer pulsing aura */}
       <div
-        className="absolute -inset-8 rounded-3xl animate-aura-pulse opacity-0 delay-600 fill-mode-forwards"
+        className="absolute -inset-12 rounded-3xl animate-aura-pulse opacity-0 delay-600 fill-mode-forwards"
         style={{
           background:
             `radial-gradient(ellipse at center, ${colors.primary} 0%, ${colors.secondary} 30%, transparent 70%)`,
-          filter: "blur(20px)",
+          filter: "blur(30px)",
         }}
       />
 
       {/* Mid-layer breathing glow */}
       <div
-        className="absolute -inset-4 rounded-2xl animate-glow-breathe opacity-0 delay-600 fill-mode-forwards"
+        className="absolute -inset-6 rounded-2xl animate-glow-breathe opacity-0 delay-600 fill-mode-forwards"
         style={{
           background:
             `radial-gradient(ellipse at center, ${colors.accent} 0%, ${colors.primary} 40%, transparent 70%)`,
-          filter: "blur(15px)",
+          filter: "blur(22px)",
         }}
       />
 
       {/* Inner intense glow */}
       <div
-        className="absolute -inset-2 rounded-xl animate-inner-glow opacity-0 delay-600 fill-mode-forwards"
+        className="absolute -inset-3 rounded-xl animate-inner-glow opacity-0 delay-600 fill-mode-forwards"
         style={{
           background:
             `radial-gradient(ellipse at center, ${colors.accent} 0%, transparent 60%)`,
-          filter: "blur(8px)",
+          filter: "blur(12px)",
         }}
       />
 
@@ -68,7 +61,7 @@ function CardGlow(props: CardGlowProps) {
           style={{
             background:
               `linear-gradient(105deg, transparent 40%, ${colors.accent} 50%, transparent 60%)`,
-            filter: "blur(4px)",
+            filter: "blur(6px)",
           }}
         />
       </div>
@@ -80,7 +73,7 @@ type LootProps = {
   stat: StatCard;
   isActive: boolean;
   direction: "left" | "right" | "center";
-  cardIndex: number;
+  rarity: Rarity;
 };
 
 export function LootCard(props: LootProps) {
@@ -88,32 +81,15 @@ export function LootCard(props: LootProps) {
     stat,
     isActive,
     direction,
-    cardIndex,
+    rarity,
   } = props;
-
-  const [hasAppeared, setHasAppeared] = useState(false);
-
-  // First card is always common (uncolored), others get random rarity
-  const rarity = useMemo<Rarity>(() => {
-    if (cardIndex === 0) return "common";
-    return getRandomRarity();
-  }, [cardIndex]);
-
-  useEffect(() => {
-    if (isActive) {
-      const timer = setTimeout(() => setHasAppeared(true), 50);
-      return () => clearTimeout(timer);
-    } else {
-      setHasAppeared(false);
-    }
-  }, [isActive]);
 
   return (
     <div
       className={`
         absolute transition-all duration-500 ease-out
         ${positionClasses[direction]}
-        ${hasAppeared && isActive ? "animate-card-pop" : ""}
+        ${isActive ? "animate-card-pop [animation-delay:50ms]" : ""}
       `}
     >
       {/* Glowing aura behind the card */}

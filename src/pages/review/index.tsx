@@ -1,35 +1,20 @@
-import { sample } from "es-toolkit/array";
 import { ArrowLeft, ArrowRight, RotateCcw } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import { Button } from "../../components/ui/button.tsx";
 import { PurpleBg, Stars } from "../../features/animated-bg/stars.tsx";
 import { LootCard } from "../../features/loot-card/index.tsx";
+
+import { getStack } from "../../features/loot-card/weighted-random.ts";
 import { Page, useSimpleRouter, useSubmissionResult } from "../../hooks.ts";
 import { STATS_DATA } from "./data.ts";
-
-function _getStack(): string[] {
-  const rarity = ["legendary", "epic", "rare", "common"];
-
-  const stack: string[] = [];
-  for (let i = 0; i < 5; i++) {
-    stack.push(sample(rarity));
-  }
-
-  return stack;
-}
 
 export function ReviewPage() {
   const [_submissionResult, setSubmissionResult] = useSubmissionResult();
   const [_page, setPage] = useSimpleRouter();
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isRevealed, setIsRevealed] = useState(false);
   const [touchStart, setTouchStart] = useState<number | null>(null);
 
-  useEffect(() => {
-    // Trigger the reveal animation after a short delay
-    const timer = setTimeout(() => setIsRevealed(true), 300);
-    return () => clearTimeout(timer);
-  }, []);
+  const stack = useMemo(getStack, []);
 
   function handleNext(): void {
     setCurrentIndex((prev) => (prev + 1) % STATS_DATA.length);
@@ -46,7 +31,7 @@ export function ReviewPage() {
     if (e.key === "ArrowLeft") handlePrev();
   }
 
-  function handleTouchStart(e: React.TouchEvent) {
+  function handleTouchStart(e: React.TouchEvent): void {
     setTouchStart(e.touches[0].clientX);
   }
 
@@ -108,16 +93,7 @@ export function ReviewPage() {
         onTouchEnd={handleTouchEnd}
       >
         {/* Title */}
-        <div
-          className={`
-            mb-8 text-center transition-all duration-700 ease-out
-            ${
-            isRevealed
-              ? "opacity-100 translate-y-0"
-              : "opacity-0 -translate-y-8"
-          }
-          `}
-        >
+        <div className="mb-8 text-center animate-in fade-in slide-in-from-top-8 duration-700 delay-300 fill-mode-backwards">
           <h1 className="text-4xl font-black text-white drop-shadow-lg tracking-wider">
             STATS UNLOCKED
           </h1>
@@ -127,13 +103,7 @@ export function ReviewPage() {
         </div>
 
         {/* Cards container */}
-        <div
-          className={`
-            relative w-72 h-96 
-            transition-all duration-700 ease-out
-            ${isRevealed ? "opacity-100 scale-100" : "opacity-0 scale-50"}
-          `}
-        >
+        <div className="relative w-72 h-96 animate-in fade-in zoom-in-50 duration-700 delay-300 fill-mode-backwards">
           {STATS_DATA.map((stat, index) => {
             const direction = getDirection(index);
             if (direction === null) return;
@@ -141,23 +111,16 @@ export function ReviewPage() {
               <LootCard
                 key={stat.id}
                 stat={stat}
+                rarity={stack[index]}
                 isActive={index === currentIndex}
                 direction={direction}
-                cardIndex={index}
               />
             );
           })}
         </div>
 
         {/* Navigation dots */}
-        <div
-          className={`
-            flex gap-3 mt-8 transition-all duration-700 delay-300
-            ${
-            isRevealed ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-          }
-          `}
-        >
+        <div className="flex gap-3 mt-8 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-500 fill-mode-backwards">
           {STATS_DATA.map((_, index) => (
             <button
               type="button"
@@ -176,12 +139,7 @@ export function ReviewPage() {
         </div>
 
         {/* Navigation arrows */}
-        <div
-          className={`
-            flex gap-8 mt-6 transition-all duration-700 delay-500
-            ${isRevealed ? "opacity-100" : "opacity-0"}
-          `}
-        >
+        <div className="flex gap-8 mt-6 animate-in fade-in duration-700 delay-700 fill-mode-backwards">
           <Button
             variant="secondary"
             onClick={handlePrev}
