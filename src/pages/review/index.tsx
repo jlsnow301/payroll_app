@@ -1,5 +1,5 @@
 import { ArrowLeft, ArrowRight, RotateCcw } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "../../components/ui/button.tsx";
 import { Stars } from "../../features/animated-bg/stars.tsx";
 import { LootCard } from "../../features/loot-card/index.tsx";
@@ -15,6 +15,7 @@ export function ReviewPage() {
   const [statsData, setStatsData] = useStatsData();
   const [_page, setPage] = useSimpleRouter();
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [viewed, setViewed] = useState<boolean[]>([]);
   const [touchStart, setTouchStart] = useState<number | null>(null);
 
   const stack = useMemo(() => getStack(statsData.length), [statsData.length]);
@@ -61,6 +62,24 @@ export function ReviewPage() {
     setStatsData([]);
     setPage(Page.Home);
   }
+
+  // Initialize viewed state when statsData changes (reset to only currentIndex viewed)
+  useEffect(() => {
+    setCurrentIndex(0);
+    setViewed(Array(statsData.length).fill(false).map((_, i) => i === 0));
+  }, [statsData.length]);
+
+  // Mark the current card as viewed whenever currentIndex changes
+  useEffect(() => {
+    setViewed((prev) => {
+      const next = prev.slice();
+      if (next.length < statsData.length) {
+        for (let i = next.length; i < statsData.length; i++) next[i] = false;
+      }
+      next[currentIndex] = true;
+      return next;
+    });
+  }, [currentIndex, statsData.length]);
 
   function getDirection(index: number): "left" | "right" | "center" | null {
     if (index === currentIndex) return "center";
@@ -136,6 +155,8 @@ export function ReviewPage() {
             const direction = getDirection(index);
             if (direction === null) return;
 
+            const isLocked = index !== currentIndex && !viewed[index];
+
             // First card is always the general stats card
             if (stat.id === 1) {
               return (
@@ -155,6 +176,7 @@ export function ReviewPage() {
                 rarity={stack[index]}
                 isActive={index === currentIndex}
                 direction={direction}
+                isLocked={isLocked}
               />
             );
           })}

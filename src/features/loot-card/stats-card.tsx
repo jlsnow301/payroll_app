@@ -29,11 +29,7 @@ export function StatsCard(props: Props) {
       <Card
         className={`
           relative w-72 h-96 
-          bg-gradient-to-br ${
-          direction === "right"
-            ? "from-gray-600 via-gray-500 to-gray-600 border-gray-400 shadow-gray-500/50"
-            : rarityColors.common
-        }
+          bg-gradient-to-br ${rarityColors.common}
           border-4 shadow-2xl
           transition-[filter,transform] duration-300
           overflow-hidden
@@ -47,25 +43,20 @@ export function StatsCard(props: Props) {
           <CardTitle
             className={`
               text-2xl font-black text-white drop-shadow-lg tracking-wide
-              ${direction === "right" ? "blur-md select-none" : ""}
             `}
           >
-            {direction === "right" ? "?????" : stat.header}
+            {stat.header}
           </CardTitle>
         </CardHeader>
 
         <CardContent className="flex flex-col items-center justify-center flex-1 gap-4 text-center">
-          <div
-            className={`space-y-3 ${
-              direction === "right" ? "blur-md select-none" : ""
-            }`}
-          >
+          <div className="space-y-3">
             {statsLines.map((line, index) => (
               <p
                 key={index}
                 className="text-lg text-white/90 font-medium"
               >
-                {direction === "right" ? "???" : line}
+                {line}
               </p>
             ))}
           </div>

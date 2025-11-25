@@ -10,18 +10,20 @@ import { positionClasses, rarityColors } from "./constants.ts";
 import { Rarity } from "./types.ts";
 
 type Props = {
-  stat: StatCard;
-  isActive: boolean;
   direction: "left" | "right" | "center";
+  isActive: boolean;
+  isLocked: boolean;
   rarity: Rarity;
+  stat: StatCard;
 };
 
 export function LootCard(props: Props) {
   const {
-    stat,
-    isActive,
     direction,
+    isActive,
+    isLocked,
     rarity,
+    stat,
   } = props;
 
   return (
@@ -32,16 +34,16 @@ export function LootCard(props: Props) {
         ${isActive ? "animate-card-pop [animation-delay:50ms]" : ""}
       `}
     >
-      {/* Glowing aura behind the card */}
-      {isActive && rarity !== "common" && <CardGlow rarity={rarity} />}
+      {/* Glowing aura behind the card (don't show for locked cards) */}
+      {isActive && !isLocked && rarity !== "common" && (
+        <CardGlow rarity={rarity} />
+      )}
 
       <Card
         className={`
           relative w-72 h-96 
           bg-gradient-to-br ${
-          direction === "right"
-            ? "from-gray-600 via-gray-500 to-gray-600 border-gray-400 shadow-gray-500/50"
-            : rarityColors[rarity]
+          isLocked ? rarityColors.common : rarityColors[rarity]
         }
           border-4 shadow-2xl
           transition-[filter,transform] duration-300
@@ -52,11 +54,13 @@ export function LootCard(props: Props) {
         {/* Shine effect */}
         <div className="absolute inset-0 bg-gradient-to-br from-white/30 via-transparent to-transparent pointer-events-none" />
 
+        {/* Lock displayed inside the avatar circle when locked (overlay removed) */}
+
         {/* Rarity badge - corner ribbon style */}
         <div className="absolute -top-1 -right-1 overflow-hidden w-20 h-20 pointer-events-none">
           <div className="absolute top-4 -right-6 w-28 text-center rotate-45 bg-black/50 backdrop-blur-sm py-0.5 shadow-lg border-y border-white/10">
             <span className="text-[9px] font-bold tracking-[0.15em] text-white/90 uppercase">
-              {direction === "right" ? "???" : rarity}
+              {isLocked ? "" : rarity}
             </span>
           </div>
         </div>
@@ -65,10 +69,10 @@ export function LootCard(props: Props) {
           <CardTitle
             className={`
               text-2xl font-black text-white drop-shadow-lg tracking-wide
-              ${direction === "right" ? "blur-md select-none" : ""}
+              ${isLocked ? "blur-md select-none" : ""}
             `}
           >
-            {direction === "right" ? "?????" : stat.header}
+            {isLocked ? "" : stat.header}
           </CardTitle>
         </CardHeader>
 
@@ -76,21 +80,21 @@ export function LootCard(props: Props) {
           {/* Winner avatar placeholder */}
           <div className="w-20 h-20 rounded-full bg-gradient-to-br from-white/40 to-white/10 border-4 border-white/50 flex items-center justify-center shadow-inner">
             <span className="text-3xl">
-              {direction === "right" ? "❓" : stat.icon}
+              {isLocked
+                ? <span className="opacity-90 select-none">🔒</span>
+                : stat.icon}
             </span>
           </div>
 
           {/* Winner name */}
           <div
-            className={`space-y-1 ${
-              direction === "right" ? "blur-md select-none" : ""
-            }`}
+            className={`space-y-1 ${isLocked ? "blur-md select-none" : ""}`}
           >
             <h3 className="text-2xl font-bold text-white drop-shadow-md">
-              {direction === "right" ? "?????" : stat.winner}
+              {isLocked ? "" : stat.winner}
             </h3>
             <p className="text-lg text-white/90 font-medium">
-              {direction === "right" ? "???" : stat.details}
+              {isLocked ? "" : stat.details}
             </p>
           </div>
         </CardContent>
