@@ -1,4 +1,5 @@
-import { Button } from "@/components/ui/button.tsx";
+import { openUrl } from "@tauri-apps/plugin-opener";
+import { Button } from "../components/ui/button.tsx";
 import {
   Dialog,
   DialogContent,
@@ -6,8 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog.tsx";
-import { openUrl } from "@tauri-apps/plugin-opener";
+} from "../components/ui/dialog.tsx";
 
 export function AboutDialog() {
   async function handleClick() {
@@ -25,8 +25,7 @@ export function AboutDialog() {
           <DialogDescription>Copyright © 2025 jlsnow301</DialogDescription>
         </DialogHeader>
         Pago Pecaminoso means "Sinful Pay" in Spanish. It was built fully in
-        house by an employee while learning a new editor and uses zero vibe
-        coding.
+        house by an employee while using a new editor, language and framework.
         <br />
         <br />
         It's free and open source with an MIT license.

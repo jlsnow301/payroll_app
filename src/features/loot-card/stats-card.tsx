@@ -7,13 +7,13 @@ import {
 import type { StatCard } from "../../pages/review/data.ts";
 import { positionClasses, rarityColors } from "./constants.ts";
 
-type StatsCardProps = {
+type Props = {
   stat: StatCard;
   isActive: boolean;
   direction: "left" | "right" | "center";
 };
 
-export function StatsCard(props: StatsCardProps) {
+export function StatsCard(props: Props) {
   const { stat, isActive, direction } = props;
 
   const statsLines = stat.details.split("\n");

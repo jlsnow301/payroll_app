@@ -1,11 +1,13 @@
 import { ArrowLeft, ArrowRight, RotateCcw } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Button } from "../../components/ui/button.tsx";
-import { PurpleBg, Stars } from "../../features/animated-bg/stars.tsx";
+import { Stars } from "../../features/animated-bg/stars.tsx";
 import { LootCard } from "../../features/loot-card/index.tsx";
 import { StatsCard } from "../../features/loot-card/stats-card.tsx";
 
+import { PurpleBg } from "../../features/animated-bg/purple-bg.tsx";
 import { getStack } from "../../features/loot-card/weighted-random.ts";
+import { useSwipe } from "../../features/swipe/index.ts";
 import { Page, useSimpleRouter } from "../../hooks.ts";
 import { useStatsData } from "./data.ts";
 
@@ -27,18 +29,25 @@ export function ReviewPage() {
     );
   }
 
-  function handleKeyDown(e: React.KeyboardEvent): void {
-    if (e.key === "ArrowRight") handleNext();
-    if (e.key === "ArrowLeft") handlePrev();
+  const { ref } = useSwipe({
+    onSwipe(direction) {
+      if (direction === "left") handleNext();
+      if (direction === "right") handlePrev();
+    },
+  });
+
+  function handleKeyDown(evt: React.KeyboardEvent): void {
+    if (evt.key === "ArrowRight") handleNext();
+    if (evt.key === "ArrowLeft") handlePrev();
   }
 
-  function handleTouchStart(e: React.TouchEvent): void {
-    setTouchStart(e.touches[0].clientX);
+  function handleTouchStart(evt: React.TouchEvent): void {
+    setTouchStart(evt.touches[0].clientX);
   }
 
-  function handleTouchEnd(e: React.TouchEvent): void {
+  function handleTouchEnd(evt: React.TouchEvent): void {
     if (touchStart === null) return;
-    const touchEnd = e.changedTouches[0].clientX;
+    const touchEnd = evt.changedTouches[0].clientX;
     const diff = touchStart - touchEnd;
 
     if (Math.abs(diff) > 50) {
@@ -119,7 +128,10 @@ export function ReviewPage() {
         </div>
 
         {/* Cards container */}
-        <div className="relative w-72 h-96 animate-in fade-in zoom-in-50 duration-700 delay-300 fill-mode-backwards">
+        <div
+          className="relative w-72 h-96 animate-in fade-in zoom-in-50 duration-700 delay-300 fill-mode-backwards"
+          ref={ref}
+        >
           {statsData.map((stat, index) => {
             const direction = getDirection(index);
             if (direction === null) return;

@@ -137,12 +137,56 @@
   }
 }
 
+@keyframes bg-drift {
+  from {
+    background-position: 0 0, 0 0;
+  }
+  to {
+    background-position: 100px -100px, 100px -100px;
+  }
+}
+
 @utility animate-vanishing {
   animation: vanishing 3s ease-in-out forwards;
 }
 
 @utility animate-drift {
   animation: drift 20s linear infinite;
+}
+
+@utility animate-bg-drift {
+  animation: bg-drift 20s linear infinite;
+}
+
+@keyframes float {
+  0% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(6px, -6px);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+@utility animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Combined animation utilities to avoid applying multiple `animate-` classes */
+@utility animate-pulse-float {
+  animation: pulse 2s ease-in-out infinite, float 6s ease-in-out infinite;
+}
+
+@utility animate-bounce-float {
+  animation: bounce 3s ease-in-out infinite, float 6s ease-in-out infinite;
+}
+
+@utility animate-ping-float {
+  animation:
+    ping 1s cubic-bezier(0, 0, 0.2, 1) infinite,
+    float 6s ease-in-out infinite;
 }
 
 /* Loot card animations */

@@ -10,7 +10,8 @@ import {
   CardTitle,
 } from "../../components/ui/card.tsx";
 import { AboutDialog } from "../../features/about.tsx";
-import { PurpleBg, Stars } from "../../features/animated-bg/stars.tsx";
+import { PurpleBg } from "../../features/animated-bg/purple-bg.tsx";
+import { Stars } from "../../features/animated-bg/stars.tsx";
 import { FileDropButton } from "../../features/file-drop/file-drop-button.tsx";
 import { FileDropDialog } from "../../features/file-drop/file-drop-dialog.tsx";
 import { PrecisionSlider } from "../../features/precision-slider.tsx";
