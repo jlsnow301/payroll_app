@@ -111,7 +111,7 @@ export function ReviewPage() {
         {/* Title */}
         <div className="mb-8 text-center animate-in fade-in slide-in-from-top-8 duration-700 delay-300 fill-mode-backwards">
           <h1 className="text-4xl font-black text-white drop-shadow-lg tracking-wider">
-            STATS UNLOCKED
+            📊 STATS UNLOCKED 📊
           </h1>
           <p className="text-white/70 mt-2">
             Swipe or use arrow keys to browse

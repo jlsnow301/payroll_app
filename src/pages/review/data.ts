@@ -6,6 +6,7 @@ export type StatCard = {
   header: string;
   winner: string;
   details: string;
+  icon?: string;
 };
 
 export const statsDataAtom = atom<StatCard[]>([]);
@@ -37,10 +38,10 @@ export function generateStatsData(result: ProcessResult): StatCard[] {
       header: "GENERAL STATS",
       winner: "",
       details: [
-        `${result.total} Total Records`,
-        `${result.expanded} Expanded`,
+        `${result.total} Total Orders`,
+        `${result.expanded} Multiples Expanded`,
         `${result.matched} Matched`,
-        `${result.skipped} Skipped`,
+        `${result.skipped} Skipped/Takeout`,
       ].join("\n"),
     },
     {
@@ -48,6 +49,7 @@ export function generateStatsData(result: ProcessResult): StatCard[] {
       header: "MOST UTILIZED",
       winner: result.top_used,
       details: `${result.top_used_count} deliveries`,
+      icon: "🚚",
     },
     {
       id: 3,
@@ -56,24 +58,28 @@ export function generateStatsData(result: ProcessResult): StatCard[] {
       details: `Avg ${result.punctual_avg >= 0 ? "+" : ""}${
         formatMinutes(result.punctual_avg)
       } • ${result.punctual_late_count} late`,
+      icon: "⏰",
     },
     {
       id: 4,
       header: "MOST LATE",
       winner: result.most_late,
       details: `${result.most_late_count} late clock-ins`,
+      icon: "⌛",
     },
     {
       id: 5,
       header: "HIGHEST LATE %",
       winner: result.highest_late_percent_driver,
-      details: `${result.highest_late_percent.toFixed(1)}% late rate`,
+      details: `Late ${result.highest_late_percent.toFixed(1)}% of the time`,
+      icon: "📉",
     },
     {
       id: 6,
       header: "LATEST CLOCK-IN",
       winner: result.latest_clock_in_driver,
       details: `${formatMinutes(result.latest_clock_in_diff_minutes)} late`,
+      icon: "🦥",
     },
   ];
 }

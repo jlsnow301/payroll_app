@@ -110,10 +110,16 @@ export function LootCard(props: LootProps) {
         {/* Shine effect */}
         <div className="absolute inset-0 bg-gradient-to-br from-white/30 via-transparent to-transparent pointer-events-none" />
 
-        <CardHeader className="text-center pt-8">
-          <div className="text-xs font-bold tracking-[0.3em] text-white/80 uppercase mb-2">
-            {direction === "right" ? "★ ??? ★" : `★ ${rarity} ★`}
+        {/* Rarity badge - corner ribbon style */}
+        <div className="absolute -top-1 -right-1 overflow-hidden w-20 h-20 pointer-events-none">
+          <div className="absolute top-4 -right-6 w-28 text-center rotate-45 bg-black/50 backdrop-blur-sm py-0.5 shadow-lg border-y border-white/10">
+            <span className="text-[9px] font-bold tracking-[0.15em] text-white/90 uppercase">
+              {direction === "right" ? "???" : rarity}
+            </span>
           </div>
+        </div>
+
+        <CardHeader className="text-center pt-6 pb-2">
           <CardTitle
             className={`
               text-2xl font-black text-white drop-shadow-lg tracking-wide
@@ -124,17 +130,17 @@ export function LootCard(props: LootProps) {
           </CardTitle>
         </CardHeader>
 
-        <CardContent className="flex flex-col items-center justify-center flex-1 gap-6 text-center">
+        <CardContent className="flex flex-col items-center justify-start pt-2 gap-4 text-center">
           {/* Winner avatar placeholder */}
           <div className="w-20 h-20 rounded-full bg-gradient-to-br from-white/40 to-white/10 border-4 border-white/50 flex items-center justify-center shadow-inner">
             <span className="text-3xl">
-              {direction === "right" ? "❓" : "🏆"}
+              {direction === "right" ? "❓" : stat.icon}
             </span>
           </div>
 
           {/* Winner name */}
           <div
-            className={`space-y-2 ${
+            className={`space-y-1 ${
               direction === "right" ? "blur-md select-none" : ""
             }`}
           >
