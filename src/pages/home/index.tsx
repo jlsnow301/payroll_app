@@ -58,6 +58,7 @@ export function HomePage() {
 
   useEffect(() => {
     if (submitMut.isSuccess) {
+      console.log(submitMut.data);
       setResults(submitMut.data);
       setPage(Page.Review);
     }
