@@ -1,4 +1,3 @@
-import { UseMutationResult } from "@tanstack/react-query";
 import { CircleAlert, CircleCheck, WandSparkles } from "lucide-react";
 import { Button } from "../../components/ui/button.tsx";
 import {
@@ -15,12 +14,11 @@ import {
   TooltipTrigger,
 } from "../../components/ui/tooltip.tsx";
 import { green500, red500 } from "../../constants.ts";
-import { ProcessResult } from "./api.ts";
+import { ProcessResult, useSubmitMutation } from "./api.ts";
 
 type Props = {
-  mutation: UseMutationResult<ProcessResult, Error, number, unknown>;
+  mutation: ReturnType<typeof useSubmitMutation>;
   ready: boolean;
-
   onSubmit: () => void;
 };
 

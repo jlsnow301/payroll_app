@@ -1,5 +1,7 @@
 import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { invoke } from "@tauri-apps/api/core";
+import { Page, useSimpleRouter } from "../../hooks.ts";
+import { generateStatsData, useStatsData } from "../review/data.ts";
 
 type ExpectedHeaders = {
   caterease: string[];
@@ -47,8 +49,15 @@ export type ProcessResult = {
 };
 
 export function useSubmitMutation() {
+  const [, setPage] = useSimpleRouter();
+  const [, setStatsData] = useStatsData();
+
   return useMutation({
     mutationFn: (precision: number) =>
       invoke<ProcessResult>("submit", { precision }),
+    onSuccess: (data) => {
+      setStatsData(generateStatsData(data));
+      setPage(Page.Review);
+    },
   });
 }

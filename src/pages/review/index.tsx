@@ -63,6 +63,20 @@ export function ReviewPage() {
     setPage(Page.Home);
   }
 
+  function getDirection(index: number): "left" | "right" | "center" | null {
+    if (index === currentIndex) return "center";
+
+    const prevIndex = (currentIndex - 1 + statsData.length) %
+      statsData.length;
+    const nextIndex = (currentIndex + 1) % statsData.length;
+
+    if (index === prevIndex) return "left";
+    if (index === nextIndex) return "right";
+
+    // Hide all other cards
+    return null;
+  }
+
   // Initialize viewed state when statsData changes (reset to only currentIndex viewed)
   useEffect(() => {
     setCurrentIndex(0);
@@ -80,20 +94,6 @@ export function ReviewPage() {
       return next;
     });
   }, [currentIndex, statsData.length]);
-
-  function getDirection(index: number): "left" | "right" | "center" | null {
-    if (index === currentIndex) return "center";
-
-    const prevIndex = (currentIndex - 1 + statsData.length) %
-      statsData.length;
-    const nextIndex = (currentIndex + 1) % statsData.length;
-
-    if (index === prevIndex) return "left";
-    if (index === nextIndex) return "right";
-
-    // Hide all other cards
-    return null;
-  }
 
   if (!statsData || statsData.length === 0) {
     return (

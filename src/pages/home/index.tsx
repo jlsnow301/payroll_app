@@ -1,5 +1,5 @@
 import { RefreshCcw } from "lucide-react";
-import { Suspense, useEffect } from "react";
+import { Suspense } from "react";
 import { Button } from "../../components/ui/button.tsx";
 import {
   Card,
@@ -15,8 +15,7 @@ import { Stars } from "../../features/animated-bg/stars.tsx";
 import { FileDropButton } from "../../features/file-drop/file-drop-button.tsx";
 import { FileDropDialog } from "../../features/file-drop/file-drop-dialog.tsx";
 import { PrecisionSlider } from "../../features/precision-slider.tsx";
-import { Page, usePrecision, useSimpleRouter } from "../../hooks.ts";
-import { generateStatsData, useStatsData } from "../review/data.ts";
+import { usePrecision } from "../../hooks.ts";
 import {
   useCatereaseMutation,
   useGetHeaders,
@@ -27,18 +26,13 @@ import { ErrorAlert } from "./error-alert.tsx";
 import { ResultSection } from "./result-section.tsx";
 
 export function HomePage() {
-  const [_page, setPage] = useSimpleRouter();
   const [precision, setPrecision] = usePrecision();
-  const [, setStatsData] = useStatsData();
 
   const expectedHeaders = useGetHeaders();
 
   const catereaseMut = useCatereaseMutation();
   const intuitMut = useIntuitMutation();
   const submitMut = useSubmitMutation();
-
-  const ready = catereaseMut.isSuccess && intuitMut.isSuccess &&
-    submitMut.isIdle;
 
   /** Resets the state of submit once a new file is input */
   function handleFileInput(): void {
@@ -53,12 +47,8 @@ export function HomePage() {
     submitMut.reset();
   }
 
-  useEffect(() => {
-    if (submitMut.isSuccess) {
-      setStatsData(generateStatsData(submitMut.data));
-      setPage(Page.Review);
-    }
-  }, [submitMut.isSuccess]);
+  const ready = catereaseMut.isSuccess && intuitMut.isSuccess &&
+    submitMut.isIdle;
 
   const errors: string[] = [];
   if (catereaseMut.isError) errors.push(`Caterease- ${catereaseMut.error}`);
