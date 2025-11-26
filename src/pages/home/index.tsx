@@ -108,21 +108,22 @@ export function HomePage() {
                 setPrecision={setPrecision}
               />
             </div>
-            <div className="flex-1 w-3/4">
+            <div className="flex-1">
               {errors.length > 0 && (
                 <ErrorAlert
                   errors={errors}
-                  reset={reset}
                 />
               )}
             </div>
           </Suspense>
         </CardContent>
-        <CardFooter>
+        <CardFooter className="flex justify-end">
           <ResultSection
             mutation={submitMut}
             onSubmit={() => submitMut.mutate(precision)}
             ready={ready}
+            reset={reset}
+            showReset={errors.length > 0}
           />
         </CardFooter>
       </Card>

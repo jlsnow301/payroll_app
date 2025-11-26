@@ -1,14 +1,16 @@
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert.tsx";
-import { Button } from "@/components/ui/button.tsx";
 import { AlertCircleIcon } from "lucide-react";
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from "../../components/ui/alert.tsx";
 
 type Props = {
   errors: string[];
-  reset: () => void;
 };
 
 export function ErrorAlert(props: Props) {
-  const { errors, reset } = props;
+  const { errors } = props;
 
   return (
     <Alert
@@ -16,16 +18,13 @@ export function ErrorAlert(props: Props) {
       className="text-lg"
     >
       <AlertCircleIcon />
-      <AlertTitle>Error detected</AlertTitle>
-      <AlertDescription className="flex">
-        <div className="flex flex-1 justify-between">
-          <ul className="list-disc">
-            {errors.map((msg, index) => <li key={index}>{msg}</li>)}
-          </ul>
-          <Button onClick={reset} size="sm" variant="outline">
-            Reset
-          </Button>
-        </div>
+      <AlertTitle className="flex items-center justify-between">
+        Error detected
+      </AlertTitle>
+      <AlertDescription className="max-h-20 overflow-y-auto">
+        <ul className="list-disc list-inside px-2">
+          {errors.map((msg, index) => <li key={index}>{msg}</li>)}
+        </ul>
       </AlertDescription>
     </Alert>
   );

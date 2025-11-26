@@ -115,19 +115,22 @@ export function ReviewPage() {
       <Stars />
 
       {/* Reset Button */}
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={handleReset}
+      <div
         className={`
           absolute top-4 right-4 z-20
-          transition-all duration-700 ease-out
-          animate-in fade-in slide-in-from-top-4 delay-2500 fill-mode-backwards
+          animate-in fade-in slide-in-from-top-4 duration-700 delay-2500 fill-mode-backwards ease-out
         `}
       >
-        <RotateCcw className="size-4" />
-        Reset
-      </Button>
+        <Button
+          variant="destructive"
+          size="sm"
+          onClick={handleReset}
+          className="transition-transform hover:scale-105 active:scale-95"
+        >
+          <RotateCcw className="size-4" />
+          Reset
+        </Button>
+      </div>
 
       <div
         className="relative z-10 flex flex-col items-center justify-center w-full h-full select-none outline-none"

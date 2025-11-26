@@ -1,29 +1,28 @@
-import { CircleAlert, CircleCheck, WandSparkles } from "lucide-react";
-import { Button } from "../../components/ui/button.tsx";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "../../components/ui/dialog.tsx";
+  CircleAlert,
+  CircleCheck,
+  RotateCcw,
+  WandSparkles,
+} from "lucide-react";
+import { Button } from "../../components/ui/button.tsx";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "../../components/ui/tooltip.tsx";
 import { green500, red500 } from "../../constants.ts";
-import { ProcessResult, useSubmitMutation } from "./api.ts";
+import { useSubmitMutation } from "./api.ts";
 
 type Props = {
   mutation: ReturnType<typeof useSubmitMutation>;
-  ready: boolean;
   onSubmit: () => void;
+  ready: boolean;
+  reset: () => void;
+  showReset: boolean;
 };
 
 export function ResultSection(props: Props) {
-  const { mutation, ready, onSubmit } = props;
+  const { mutation, ready, onSubmit, reset, showReset } = props;
 
   let submitIcon = <WandSparkles />;
   if (mutation.isSuccess) {
@@ -33,58 +32,34 @@ export function ResultSection(props: Props) {
   }
 
   return (
-    <div className="flex flex-1 gap-2 justify-between items-center">
-      <div>
-        {mutation.isSuccess && <ViewStats {...mutation.data} />}
-      </div>
-      <div className="flex gap-2 items-center">
-        <Tooltip delayDuration={500}>
-          <TooltipTrigger asChild>
-            <Button
-              disabled={!ready}
-              onClick={onSubmit}
-              className="w-36"
-              size="lg"
-            >
-              {submitIcon} Auto
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>
-            {ready
-              ? "Assign all matches within the precision"
-              : "Both files must be uploaded and valid"}
-          </TooltipContent>
-        </Tooltip>
-      </div>
-    </div>
-  );
-}
-
-function ViewStats(props: ProcessResult) {
-  const { matched = 0, skipped = 0, total = 1, expanded = 0 } = props;
-
-  const valid = total - skipped;
-  const missing = valid - matched;
-  const accuracy = (matched / valid * 100).toFixed(2);
-
-  return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button size="lg" variant="outline">
-          View Stats
+    <div className="flex gap-2 items-center">
+      {showReset && (
+        <Button
+          size="lg"
+          variant="destructive"
+          onClick={reset}
+          className="w-36 transition-transform hover:scale-105 active:scale-95"
+        >
+          <RotateCcw /> Reset
         </Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Processing Results</DialogTitle>
-          <DialogDescription>The program ran successfully</DialogDescription>
-        </DialogHeader>
-        Overall, the application wrote {total} orders with {matched}{" "}
-        timesheet matches. Given the sensitivity, it had{" "}
-        {accuracy}% accuracy ({`${missing} missing, ${skipped} skipped`}).
-        Orders with multiple assignees were expanded to produce {expanded}{" "}
-        rows, highlighted in yellow.
-      </DialogContent>
-    </Dialog>
+      )}
+      <Tooltip delayDuration={500}>
+        <TooltipTrigger asChild>
+          <Button
+            disabled={!ready}
+            onClick={onSubmit}
+            className="w-36 transition-transform hover:scale-105 active:scale-95"
+            size="lg"
+          >
+            {submitIcon} Auto
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          {ready
+            ? "Assign all matches within the precision"
+            : "Both files must be uploaded and valid"}
+        </TooltipContent>
+      </Tooltip>
+    </div>
   );
 }
